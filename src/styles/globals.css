@@ -1,0 +1,93 @@
+/* TODO: Bundle this in ui/react */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* main app background and text */
+    /* AA WCAG Compliant */
+    --background: 0 0% 100%;
+    --foreground: 230 7% 27%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 230 7% 27%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 230 7% 27%;
+
+    /* Primary combo, e.g. primary buttons */
+    /* AA WCAG Compliant */
+    --primary: 249deg 69% 62%;
+    --primary-foreground: 0deg 0% 100%;
+
+    /* Secondary combo, e.g. secondary buttons, filter buttons */
+    --secondary: 0 0% 100%;
+    --secondary-foreground: 230 7% 27%;
+
+    /* Muted bg, e.g. when hovering over a table row */
+    --muted: 245 19% 98%;
+    /* Muted text, e.g. placeholders */
+    --muted-foreground: 230 6% 41%;
+
+    /* Active colors, e.g. active sidebar tab */
+    /* AA WCAG Compliant */
+    --accent: 249 100% 96%;
+    --accent-foreground: 252 49% 24%;
+
+    --destructive: 2 100% 98%;
+    --destructive-foreground: 2 99% 30%;
+
+    --success: 160 47% 93%;
+    --success-foreground: 177 100% 17%;
+
+    --border: 227 35% 94%;
+    --input: 220 13% 91%;
+    --ring: 224 71.4% 4.1%;
+
+    --radius: 0.5rem;
+    --shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.09);
+  }
+
+  .dark {
+    --background: 230 10% 21%;
+    --foreground: 227 10% 78%;
+
+    --card: 230 10% 21%;
+    --card-foreground: 227 10% 78%;
+
+    --popover: 230 10% 21%;
+    --popover-foreground: 227 10% 78%;
+
+    --primary: 252 49% 24%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 230 10% 18%;
+    --secondary-foreground: 227 10% 78%;
+
+    --muted: 215 27.9% 16.9%;
+    --muted-foreground: 217.9 10.6% 64.9%;
+
+    --accent: 249 100% 96%;
+    --accent-foreground: 252 49% 24%;
+
+    --destructive: 2 100% 98%;
+    --destructive-foreground: 2 99% 30%;
+
+    --success: 160 47% 93%;
+    --success-foreground: 177 100% 17%;
+
+    --border: 227 9% 19%;
+    --input: 215 27.9% 16.9%;
+    --ring: 216 12.2% 83.9%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
