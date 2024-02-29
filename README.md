@@ -18,3 +18,4 @@ This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-opti
 
 ```bash
 NPM_TOKEN=<YOUR_NPM_TOKEN> docker buildx build --secret id=npm_token,env=NPM_TOKEN -t clinia/sandbox-ui .
+```
