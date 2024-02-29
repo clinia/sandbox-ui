@@ -1,4 +1,6 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Sandbox UI
+
+This is the UI for the Clinia Sandbox. The sandboxes focus on providing a simple and easy to use interface for developers to interact with the Clinia Search API. The sandbox UI demonstrate how to integrate our Search SDK into a Next.js application.
 
 ## Getting Started
 
