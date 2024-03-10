@@ -1,10 +1,13 @@
-import {useTranslations} from 'next-intl';
+import { Searchbox } from '@/components/searchbox';
+import { useTranslations } from 'next-intl';
 
 export default function Home() {
   const t = useTranslations();
   return (
-    <main>
-      <h1>{t('title')}</h1>
-    </main>
+    <div className="flex justify-center">
+      <div className="w-[570px]">
+        <Searchbox />
+      </div>
+    </div>
   );
 }

@@ -1,3 +1,14 @@
 {
-    "title": "Home of the Clinia Health Grade Search Sandbox"
+    "title": "Home of the Clinia Health Grade Search Sandbox",
+    "searchbox": {
+        "placeholder": "Search for words and phrases, or ask a question...",
+        "groups": {
+            "ask": {
+                "heading": "Ask"
+            },
+            "search": {
+                "heading": "Search"
+            }
+        }
+    }
 }

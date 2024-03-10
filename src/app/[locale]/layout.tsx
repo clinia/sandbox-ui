@@ -3,6 +3,8 @@ import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import type { Metadata } from 'next';
 import '@/styles/globals.css';
+import I18nProvider from './i18n-provider';
+import { Sidebar } from './sidebar';
 
 function cn(...inputs: string[]) {
   const cls = clsx(inputs);
@@ -15,10 +17,10 @@ export const metadata: Metadata = {
 
 export default function LocaleLayout({
   children,
-  params: {locale}
+  params: { locale },
 }: {
   children: React.ReactNode;
-  params: {locale: string};
+  params: { locale: string };
 }) {
   return (
     <html lang={locale}>
@@ -27,7 +29,12 @@ export default function LocaleLayout({
           'min-h-screen bg-background font-sans antialiased',
           fontSans.variable
         )}
-      >{children}</body>
+      >
+        <I18nProvider locale={locale}>
+          <Sidebar />
+          <main className="min-h-screen p-4 sm:ml-56">{children}</main>
+        </I18nProvider>
+      </body>
     </html>
   );
 }
