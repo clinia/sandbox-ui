@@ -1,11 +1,11 @@
 'use client';
 
-import { useI18nRouter } from '@/lib/use-i18n-router';
 import { useClickAway } from '@uidotdev/usehooks';
 import { Search, Sparkles } from 'lucide-react';
 import { twMerge } from 'tailwind-merge';
 import { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/router';
 import {
   Command,
   CommandEmpty,
@@ -21,7 +21,7 @@ export const Searchbox = ({ className, ...props }: SearchBoxProps) => {
   const t = useTranslations();
   const [value, setValue] = useState('');
   const [open, setOpen] = useState(false);
-  const router = useI18nRouter();
+  const router = useRouter();
 
   const groups = useMemo(
     () => [
