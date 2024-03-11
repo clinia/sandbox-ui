@@ -1,7 +1,9 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { Button } from '@clinia-ui/react';
+import { useMeta } from './use-meta';
 
 type QuestionsProps = {
   title: string;
@@ -26,5 +28,18 @@ export const Questions = ({ title, questions }: QuestionsProps) => {
         </Button>
       ))}
     </div>
+  );
+};
+
+export const QuestionsResult = () => {
+  const meta = useMeta();
+  const t = useTranslations();
+
+  if (!meta) {
+    return null;
+  }
+
+  return (
+    <Questions title={t('search.followUp.title')} questions={meta.questions} />
   );
 };

@@ -1,18 +1,97 @@
 'use client';
 
-import { Article, Hit } from '@/lib/client';
+import { Article, Highlight, Hit } from '@/lib/client';
 import { useHits } from '@clinia/search-sdk-react';
 
 export const Hits = () => {
   const hits = useHits() as Hit<Article>[];
 
+  if (hits.length === 0) {
+    return null;
+  }
+
   return (
-    <div>
+    <div className="grid w-[674px] grid-cols-1 divide-y rounded-lg border">
       {hits.map((hit) => (
-        <div key={hit.resource.id}>
-          <h2>{hit.resource.title}</h2>
-        </div>
+        <ArticleHit hit={hit} key={hit.resource.id} />
       ))}
     </div>
+  );
+};
+
+const ArticleHit = ({ hit }: { hit: Hit<Article> }) => {
+  const passageHighlight = hit.highlight.find((h) => h.type === 'passage');
+
+  return (
+    <article className="p-4">
+      <h1 className="mb-2 text-lg font-medium text-foreground">
+        {hit.resource.title}
+      </h1>
+      {passageHighlight && (
+        <PassageHighlight
+          highlight={passageHighlight}
+          text={hit.resource.text}
+        />
+      )}
+    </article>
+  );
+};
+
+const PassageHighlight = ({
+  highlight,
+  text,
+}: {
+  highlight: Highlight;
+  text: string;
+}) => {
+  if (highlight.type !== 'passage') {
+    return null;
+  }
+
+  const sentenceHighlight = highlight.highlight;
+  if (sentenceHighlight?.type === 'sentence') {
+    return (
+      <SentenceHighlight
+        highlight={sentenceHighlight}
+        passage={highlight}
+        text={text}
+      />
+    );
+  }
+
+  return <p className="text-sm text-muted-foreground">{highlight.match}</p>;
+};
+
+const SentenceHighlight = ({
+  highlight,
+  text,
+  passage,
+}: {
+  highlight: Highlight;
+  passage: Highlight;
+  text: string;
+}) => {
+  // We get the start offset of the sentence with respect to the passage
+  const startOffset = highlight.startOffset - passage.startOffset;
+
+  console.log({
+    passageStartOffset: passage.startOffset,
+    sentenceStartOffset: highlight.startOffset,
+    startOffset,
+  });
+
+  const start = passage.match.slice(passage.startOffset, startOffset);
+
+  // We get the end offset of the sentence with respect to the passage
+  const endOffset = highlight.endOffset - passage.startOffset;
+
+  const end = passage.match.slice(endOffset);
+
+  return (
+    <p className="text-sm text-muted-foreground">
+      {start}
+      <mark className="bg-primary/20">{highlight.match}</mark>
+      {end}
+    </p>
   );
 };

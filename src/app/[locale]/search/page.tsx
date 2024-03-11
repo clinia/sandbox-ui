@@ -1,9 +1,8 @@
 import { Hits } from '@/components/hits';
+import { QuestionsResult } from '@/components/questions';
 import { SearchProvider } from '@/components/search-provider';
 import { Searchbox } from '@/components/searchbox';
 import { SearchRequest } from '@/lib/client';
-import { getInfoPocServerClient } from '@/lib/info-poc-client';
-import { SearchParameters } from '@clinia/search-sdk-core';
 
 const parseSearchRequest = (searchParams: {
   [key: string]: string | string[] | undefined;
@@ -27,19 +26,11 @@ export default async function Search({
 }) {
   const req = parseSearchRequest(searchParams);
 
-  const client = getInfoPocServerClient();
-
-  const resp = await client.search(req);
-
   return (
-    <SearchProvider
-      state={{
-        searchRequest: req,
-        searchResponse: resp,
-      }}
-    >
-      <div className="grid justify-center">
-        <Searchbox className="w-[570px]" />
+    <SearchProvider>
+      <div className="grid justify-center gap-8">
+        <Searchbox className="w-[570px]" initialQuery={req.query} />
+        <QuestionsResult />
         <Hits />
       </div>
     </SearchProvider>

@@ -1,6 +1,7 @@
 'use client';
 
 import { SearchRequest, SearchResponse } from '@/lib/client';
+import { client } from '@/lib/info-poc-client';
 import { PropsWithChildren, use, useCallback, useEffect, useMemo } from 'react';
 import {
   SearchParameters,
@@ -18,13 +19,16 @@ type SearchProviderProps = PropsWithChildren<{
 
 export const SearchProvider = ({ children, state }: SearchProviderProps) => {
   const search: SearchSDKOptions['search'] = async (_collection, params) => {
-    const response = await fetch(`/api/search?q=${params.query}`);
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch search results');
-    }
-
-    return await response.json();
+    const resp = await client.search({ query: params.query ?? '' });
+    return {
+      hits: resp.hits,
+      meta: {
+        numPages: 1,
+        page: 1,
+        perPage: 10,
+        total: resp.hits.length,
+      },
+    };
   };
 
   const searchForFacets: SearchSDKOptions['searchForFacets'] =
@@ -72,23 +76,8 @@ export const SearchProvider = ({ children, state }: SearchProviderProps) => {
       }}
     >
       <Collection partition="main" collection="articles">
-        <CollectionObserver />
         {children}
       </Collection>
     </SearchSDKProvider>
   );
-};
-
-/**
- * This component is used to observe the collection state and trigger side effects
- *
- **/
-const CollectionObserver = () => {
-  const col = useCollection();
-
-  useEffect(() => {
-    col.search();
-  }, [col]);
-
-  return null;
 };
