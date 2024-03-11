@@ -1,3 +1,4 @@
+import { getMessages } from '@/i18n';
 import type { PropsWithChildren } from 'react';
 import { NextIntlClientProvider } from 'next-intl';
 import type { useTimeZone } from 'next-intl';
@@ -12,7 +13,7 @@ export default async function I18nProvider({
   locale,
   timeZone,
 }: I18nProviderProps) {
-  const messages = (await import(`../../../messages/${locale}.json`)).default;
+  const messages = await getMessages(locale);
 
   return (
     <NextIntlClientProvider

@@ -1,6 +1,9 @@
 'use client';
 
+import { useI18nRouter } from '@/lib/use-i18n-router';
+import { useClickAway } from '@uidotdev/usehooks';
 import { Search, Sparkles } from 'lucide-react';
+import { twMerge } from 'tailwind-merge';
 import { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import {
@@ -12,10 +15,13 @@ import {
   CommandList,
 } from '@clinia-ui/react';
 
-export const Searchbox = () => {
+type SearchBoxProps = React.HTMLAttributes<HTMLDivElement>;
+
+export const Searchbox = ({ className, ...props }: SearchBoxProps) => {
   const t = useTranslations();
   const [value, setValue] = useState('');
   const [open, setOpen] = useState(false);
+  const router = useI18nRouter();
 
   const groups = useMemo(
     () => [
@@ -37,14 +43,24 @@ export const Searchbox = () => {
     [t]
   );
 
+  const ref = useClickAway<HTMLDivElement>(() => setOpen(false));
+
+  const handleSearch = (v: string) => {
+    router.push(`/search?q=${v}`);
+  };
+
   return (
-    <Command className="border" loop>
+    <Command className={twMerge('border', className)} loop ref={ref} {...props}>
       <CommandInput
         placeholder={t('searchbox.placeholder')}
         value={value}
         onFocus={() => setOpen(true)}
-        onBlur={() => setOpen(false)}
         onValueChange={(v) => setValue(v)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            handleSearch(value);
+          }
+        }}
       />
 
       <CommandList>
@@ -64,7 +80,7 @@ export const Searchbox = () => {
                   <CommandItem
                     key={item}
                     className="gap-2"
-                    onSelect={(v) => console.log(v)}
+                    onSelect={(v) => handleSearch(v)}
                   >
                     {group.icon}
                     {item}
