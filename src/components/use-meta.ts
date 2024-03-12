@@ -5,17 +5,18 @@ export const useMeta = () => {
   const meta = useObserver({
     key: 'meta',
     onSearchStateChange: (state) => {
-      if (!state.result)
-        return {
-          queryId: '',
-          queryIntent: '',
-          query: '',
-          questions: [],
-        };
+      if (!state.result) return undefined;
 
       return state.result.meta as unknown as SearchResponse['meta'];
     },
   });
 
-  return meta;
+  return (
+    meta ?? {
+      queryId: '',
+      queryIntent: '',
+      query: '',
+      questions: [],
+    }
+  );
 };

@@ -25,14 +25,13 @@ export default function LocaleLayout({
   return (
     <html lang={locale}>
       <body
-        className={cn(
-          'min-h-screen bg-background font-sans antialiased',
-          fontSans.variable
-        )}
+        className={cn('bg-background font-sans antialiased', fontSans.variable)}
       >
         <I18nProvider locale={locale}>
           <Sidebar />
-          <main className="min-h-screen p-4 sm:ml-56">{children}</main>
+          <main className="absolute left-0 right-0 overflow-auto sm:left-56">
+            {children}
+          </main>
         </I18nProvider>
       </body>
     </html>

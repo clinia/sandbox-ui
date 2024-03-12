@@ -27,6 +27,7 @@ export const SearchProvider = ({ children, state }: SearchProviderProps) => {
         page: 1,
         perPage: 10,
         total: resp.hits.length,
+        ...resp.meta,
       },
     };
   };
@@ -62,6 +63,7 @@ export const SearchProvider = ({ children, state }: SearchProviderProps) => {
           page: 1,
           perPage: 10,
           total: state.searchResponse.hits.length,
+          ...state.searchResponse.meta,
         },
       },
     };
