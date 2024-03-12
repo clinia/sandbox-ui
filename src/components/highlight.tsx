@@ -15,7 +15,7 @@ export const PassageHighlight = ({ highlight }: { highlight: Highlight }) => {
   return <p className="text-sm text-muted-foreground">{highlight.match}</p>;
 };
 
-const SentenceHighlight = ({
+export const SentenceHighlight = ({
   highlight,
   passage,
 }: {

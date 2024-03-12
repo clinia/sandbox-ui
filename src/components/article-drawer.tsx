@@ -2,7 +2,9 @@
 
 import { X } from 'lucide-react';
 import Markdown from 'react-markdown';
+import Link from 'next/link';
 import { Button } from '@clinia-ui/react';
+import { PassageHighlight } from './highlight';
 import { useSearchLayout } from './search-layout';
 
 export const ArticleDrawer = () => {
@@ -15,8 +17,10 @@ export const ArticleDrawer = () => {
   return (
     <div className="relative">
       <header className="absolute left-0 z-40 h-[48px] w-full border-b bg-background px-4 py-2">
-        <div className=" flex flex-nowrap justify-between gap-1 align-middle">
-          <span className="text-sm font-medium text-gray-700"></span>
+        <div className=" flex flex-nowrap items-center justify-between gap-1 align-middle">
+          <span className="text-sm font-medium text-gray-700">
+            Excerpt from Article
+          </span>
           <Button
             variant="link"
             size="icon"
@@ -51,7 +55,15 @@ export const ArticleDrawer = () => {
             >
               {highlight.match}
             </Markdown>
+            // <PassageHighlight key={idx} highlight={highlight} />
           ))}
+          <div className="py-6 pl-[-4px]">
+            <Button variant="link">
+              <Link href={`/articles/${searchLayout.hit.resource.id}`}>
+                View full article
+              </Link>
+            </Button>
+          </div>
         </div>
       </div>
     </div>
