@@ -16,9 +16,7 @@ export const ArticleDrawer = () => {
     <div className="relative">
       <header className="absolute left-0 z-40 h-[48px] w-full border-b bg-background px-4 py-2">
         <div className=" flex flex-nowrap justify-between gap-1 align-middle">
-          <span className="text-sm font-medium text-gray-700">
-            Elsevier - 2024-01-03
-          </span>
+          <span className="text-sm font-medium text-gray-700"></span>
           <Button
             variant="link"
             size="icon"

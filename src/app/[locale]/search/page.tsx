@@ -4,12 +4,7 @@ import { QuestionsResult } from '@/components/questions';
 import { SearchProvider } from '@/components/search-provider';
 import { SearchBox } from '@/components/searchbox';
 
-export default async function Search({
-  searchParams,
-}: {
-  params: { locale: string };
-  searchParams: { [key: string]: string | string[] | undefined };
-}) {
+export default async function Search() {
   return (
     <SearchProvider>
       <div className="min-w-96 flex-grow">
