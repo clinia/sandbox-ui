@@ -12,10 +12,10 @@ export const authConfig: ConfigParameters = {
     scope: 'openid offline',
   },
   session: {
-    name: 'clinia_atlas_session',
+    name: 'clinia_sandbox_session',
   },
   idpLogout: true,
-  auth0Logout: false,
+  auth0Logout: true,
   routes: {
     callback: '/auth/callback',
     login: '/auth/login',
