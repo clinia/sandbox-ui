@@ -16,8 +16,8 @@ export default async function Search() {
             <div className="flex flex-col items-center justify-center gap-8 py-8">
               <SearchBox className="w-[570px]" />
               <Assistant className="w-[674px]" />
-              <QuestionsResult />
-              <Hits />
+              {/* <QuestionsResult />
+              <Hits /> */}
             </div>
           </div>
         </div>

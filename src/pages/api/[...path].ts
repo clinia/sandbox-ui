@@ -23,7 +23,7 @@ async function proxy(req: NextApiRequest, res: NextApiResponse) {
       req,
       res,
       {
-        target: process.env.API_URL ?? 'http://localhost:7999',
+        target: process.env.API_URL ?? 'http://localhost:3000', // Atlas
       },
       (err: Error | null | undefined) => {
         if (err) {

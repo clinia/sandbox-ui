@@ -6,7 +6,7 @@ import type { SearchResponse } from '../../../lib/client/types';
 const cache = new Map<string, ReturnType<SummarizerClient['streamAnswer']>>();
 export const dynamic = 'force-dynamic';
 
-const TRITON_URL = 'http://127.0.0.1:57349';
+const TRITON_URL = 'http://127.0.0.1:61567';
 const client = new SummarizerClient(TRITON_URL);
 const MODEL_NAME = 'summarizer_medical_journals_qa';
 const MODEL_VERSION = '120240905190000';
@@ -59,26 +59,42 @@ export async function POST(request: NextRequest) {
     mode?: string;
   };
 
-  const queryId = uuidv4();
+  let responseStream = new TransformStream();
+  const writer = responseStream.writable.getWriter();
+  const encoder = new TextEncoder();
 
-  const out: SearchResponse = {
-    hits: [],
-    meta: {
-      queryId,
-      queryIntent: 'QUESTION',
-      questions: [],
-    },
-  };
-
-  cache.set(
-    queryId,
-    client.streamAnswer(
-      MODEL_NAME,
-      MODEL_VERSION,
-      query,
-      articles,
-      mode ?? 'answer'
-    )
+  console.log(`Query = ${query}, articles = ${articles}`);
+  const answerStream = client.streamAnswer(
+    MODEL_NAME,
+    MODEL_VERSION,
+    query,
+    articles,
+    mode ?? 'answer'
   );
-  return new Response(JSON.stringify(out), { status: 200 });
+
+  (async () => {
+    for await (const chunk of answerStream) {
+      // Assuming the text is in a property called 'text' in the chunk
+      const bytes = chunk.inferResponse?.rawOutputContents?.[0];
+      if (bytes === undefined || bytes.length <= 4) {
+        await writer.close();
+        return;
+      }
+
+      // TODO: Check if we can use the bytes directly
+      const text = new TextDecoder().decode(bytes?.slice(4));
+      console.log(`Got chunk = ${text}`);
+      writer.write(encoder.encode(text));
+    }
+
+    await writer.close();
+  })();
+
+  return new Response(responseStream.readable, {
+    headers: {
+      'Content-Type': 'text/event-stream',
+      Connection: 'keep-alive',
+      'Cache-Control': 'no-cache, no-transform',
+    },
+  });
 }

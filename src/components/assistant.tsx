@@ -2,22 +2,20 @@
 
 import { Sparkles } from 'lucide-react';
 import { twMerge } from 'tailwind-merge';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Markdown from 'react-markdown';
+import { V1Hit } from '@clinia/client-common';
+import { useHits, useQuery } from '@clinia/search-sdk-react';
 import styles from './assistant.module.css';
-import { useEventSource, useEventSourceListener } from './use-event-source';
-import { useMeta } from './use-meta';
+import { useStreamRequest } from './use-stream-request';
 
 export type AssistantProps = {
   className?: string;
 };
 
 export const Assistant = ({ className }: AssistantProps) => {
-  const meta = useMeta();
-
-  if (meta.queryIntent !== 'QUESTION' || !meta.queryId) {
-    return null;
-  }
+  const hits = useHits();
+  const [query] = useQuery();
 
   return (
     <div className={twMerge('rounded-lg border p-6', className)}>
@@ -26,7 +24,7 @@ export const Assistant = ({ className }: AssistantProps) => {
         <h1 className="text-base font-medium text-primary">Assistant</h1>
       </header>
       <div>
-        <AssistantListener queryId={meta.queryId} />
+        <AssistantListener hits={hits as any} query={query} />
       </div>
       <footer></footer>
     </div>
@@ -34,31 +32,43 @@ export const Assistant = ({ className }: AssistantProps) => {
 };
 
 type AssistantListenerProps = {
-  queryId: string;
+  query: string;
+  hits: V1Hit[];
 };
-const AssistantListener = ({ queryId }: AssistantListenerProps) => {
+const AssistantListener = ({ hits, query }: AssistantListenerProps) => {
   const [summary, setSummary] = useState('');
 
-  // Reset summary every time the query ID change
-  useEffect(() => setSummary(''), [queryId]);
+  // Reset summary every time the query changes
+  useEffect(() => {
+    console.log('query or hits changed');
+    setSummary('');
+    if (hits.length === 0) return;
+    console.log(hits);
+    const passages = hits.flatMap((h) =>
+      (h.highlighting?.['abstract.passages'] ?? [])
+        .slice(0, 1)
+        .map((x) => x.highlight)
+    );
+    refetch(`/api/assistant`, {
+      method: 'POST',
+      body: JSON.stringify({
+        query,
+        articles: passages.slice(0, 3),
+      }),
+    });
+  }, [query, hits]);
 
-  const [eventSource, eventSourceStatus] = useEventSource(
-    `/api/assistant?queryId=${encodeURIComponent(queryId)}`,
-    // `/api/query/${queryId}/answer`,
-    true
+  const { refetch, status } = useStreamRequest(
+    useCallback(
+      (chunk: string) => {
+        console.log(chunk);
+        setSummary((s) => s + chunk);
+      },
+      [setSummary]
+    )
   );
-  useEventSourceListener(
-    eventSource,
-    ['message'],
-    (evt) => {
-      console.log(evt.data);
-      setSummary((s) => s + evt.data);
-    },
-    [setSummary]
-  );
-
   const classnames = [];
-  if (eventSourceStatus === 'open' || eventSourceStatus === 'init') {
+  if (status === 'loading' || status === 'idle') {
     classnames.push(styles.type);
   }
 
@@ -77,5 +87,4 @@ const AssistantListener = ({ queryId }: AssistantListenerProps) => {
       {summary}
     </Markdown>
   );
-  //   return <p className={classnames.join(' ')}>{summary}</p>;
 };
