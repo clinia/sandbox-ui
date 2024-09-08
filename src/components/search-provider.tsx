@@ -19,7 +19,18 @@ type SearchProviderProps = PropsWithChildren<{
 
 export const SearchProvider = ({ children, state }: SearchProviderProps) => {
   const search: SearchSDKOptions['search'] = async (_collection, params) => {
-    const resp = await client.search({ query: params.query ?? '' });
+    const r = await fetch(`/api/assistant`, {
+      method: 'POST',
+      body: JSON.stringify({
+        query: params.query,
+        articles: [
+          '{"id": "test-id-1", "text": "", "title": "Process of finding bone problems", "passages": ["Bone defects can be found by means of a bone scanner"]}',
+          '{"id": "test-id-2", "text": "", "title": "Process of finding mind problems", "passages": ["Mind problems are the field of a psychologist"]}',
+        ],
+      }),
+    });
+    const resp = await r.json();
+    // const resp = await client.search({ query: params.query ?? '' });
     return {
       hits: resp.hits,
       meta: {

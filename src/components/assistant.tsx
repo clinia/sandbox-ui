@@ -43,13 +43,15 @@ const AssistantListener = ({ queryId }: AssistantListenerProps) => {
   useEffect(() => setSummary(''), [queryId]);
 
   const [eventSource, eventSourceStatus] = useEventSource(
-    `/api/query/${queryId}/answer`,
+    `/api/assistant?queryId=${encodeURIComponent(queryId)}`,
+    // `/api/query/${queryId}/answer`,
     true
   );
   useEventSourceListener(
     eventSource,
     ['message'],
     (evt) => {
+      console.log(evt.data);
       setSummary((s) => s + evt.data);
     },
     [setSummary]
