@@ -49,6 +49,9 @@ const AssistantListener = ({ hits, query }: AssistantListenerProps) => {
         .slice(0, 1)
         .map((x) => x.highlight)
     );
+    console.log(
+      `Fetching assistant for ${query} and ${JSON.stringify(passages, undefined, 4)}`
+    );
     refetch(`/api/assistant`, {
       method: 'POST',
       body: JSON.stringify({

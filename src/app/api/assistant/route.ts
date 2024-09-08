@@ -11,6 +11,11 @@ const client = new SummarizerClient(TRITON_URL);
 const MODEL_NAME = 'summarizer_medical_journals_qa';
 const MODEL_VERSION = '120240905190000';
 
+type InferParameter = {
+  parameterChoice: {
+    value: boolean;
+  };
+};
 export async function GET(request: NextRequest) {
   // Retrieve the query ID from the request
   const queryId = request.nextUrl.searchParams.get('queryId');
@@ -75,6 +80,14 @@ export async function POST(request: NextRequest) {
   (async () => {
     for await (const chunk of answerStream) {
       // Assuming the text is in a property called 'text' in the chunk
+      const isFinished: InferParameter | undefined = chunk.inferResponse
+        ?.parameters['triton_final_response'] as InferParameter | undefined;
+      if (isFinished?.parameterChoice.value) {
+        console.log('Final response received');
+        await writer.close();
+        return;
+      }
+
       const bytes = chunk.inferResponse?.rawOutputContents?.[0];
       if (bytes === undefined || bytes.length <= 4) {
         await writer.close();
@@ -84,7 +97,7 @@ export async function POST(request: NextRequest) {
       // TODO: Check if we can use the bytes directly
       const text = new TextDecoder().decode(bytes?.slice(4));
       console.log(`Got chunk = ${text}`);
-      writer.write(encoder.encode(text));
+      writer.write(encoder.encode(`data: ${text}\n\n`));
     }
 
     await writer.close();
