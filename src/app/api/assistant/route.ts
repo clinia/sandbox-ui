@@ -97,7 +97,7 @@ export async function POST(request: NextRequest) {
       // TODO: Check if we can use the bytes directly
       const text = new TextDecoder().decode(bytes?.slice(4));
       console.log(`Got chunk = ${text}`);
-      writer.write(encoder.encode(`data: ${text}\n\n`));
+      writer.write(encoder.encode(text));
     }
 
     await writer.close();

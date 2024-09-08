@@ -2,11 +2,13 @@
 
 import { Sparkles } from 'lucide-react';
 import { twMerge } from 'tailwind-merge';
+import { v4 as uuid } from 'uuid';
 import { useCallback, useEffect, useState } from 'react';
 import Markdown from 'react-markdown';
 import { V1Hit } from '@clinia/client-common';
 import { useHits, useQuery } from '@clinia/search-sdk-react';
 import styles from './assistant.module.css';
+import { useEventSource, useEventSourceListener } from './use-event-source';
 import { useStreamRequest } from './use-stream-request';
 
 export type AssistantProps = {
@@ -36,6 +38,7 @@ type AssistantListenerProps = {
   hits: V1Hit[];
 };
 const AssistantListener = ({ hits, query }: AssistantListenerProps) => {
+  const [queryId, setQueryId] = useState<string>('');
   const [summary, setSummary] = useState('');
 
   // Reset summary every time the query changes
@@ -45,9 +48,14 @@ const AssistantListener = ({ hits, query }: AssistantListenerProps) => {
     if (hits.length === 0) return;
     console.log(hits);
     const passages = hits.flatMap((h) =>
-      (h.highlighting?.['abstract.passages'] ?? [])
-        .slice(0, 1)
-        .map((x) => x.highlight)
+      (h.highlighting?.['abstract.passages'] ?? []).slice(0, 1).map((x) =>
+        JSON.stringify({
+          id: h.resource.id,
+          text: '',
+          title: h.resource.data.title,
+          passages: [x.highlight],
+        })
+      )
     );
     console.log(
       `Fetching assistant for ${query} and ${JSON.stringify(passages, undefined, 4)}`
