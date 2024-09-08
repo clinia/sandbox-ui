@@ -2,13 +2,11 @@
 
 import { Sparkles } from 'lucide-react';
 import { twMerge } from 'tailwind-merge';
-import { v4 as uuid } from 'uuid';
 import { useCallback, useEffect, useState } from 'react';
 import Markdown from 'react-markdown';
 import { V1Hit } from '@clinia/client-common';
 import { useHits, useQuery } from '@clinia/search-sdk-react';
 import styles from './assistant.module.css';
-import { useEventSource, useEventSourceListener } from './use-event-source';
 import { useStreamRequest } from './use-stream-request';
 
 export type AssistantProps = {

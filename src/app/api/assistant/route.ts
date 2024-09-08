@@ -6,10 +6,11 @@ import type { SearchResponse } from '../../../lib/client/types';
 const cache = new Map<string, ReturnType<SummarizerClient['streamAnswer']>>();
 export const dynamic = 'force-dynamic';
 
-const TRITON_URL = 'http://127.0.0.1:61567';
-const client = new SummarizerClient(TRITON_URL);
-const MODEL_NAME = 'summarizer_medical_journals_qa';
-const MODEL_VERSION = '120240905190000';
+const INFERENCE_URL = process.env.INFERENCE_URL ?? 'http://127.0.0.1:8001';
+const MODEL_NAME =
+  process.env.INFERENCE_MODEL_NAME ?? 'summarizer_medical_journals_qa';
+const MODEL_VERSION = process.env.INFERENCE_MODEL_VERSION ?? '120240905190000';
+const client = new SummarizerClient(INFERENCE_URL);
 
 type InferParameter = {
   parameterChoice: {
@@ -94,10 +95,10 @@ export async function POST(request: NextRequest) {
         return;
       }
 
-      // TODO: Check if we can use the bytes directly
-      const text = new TextDecoder().decode(bytes?.slice(4));
-      console.log(`Got chunk = ${text}`);
-      writer.write(encoder.encode(text));
+      // Uncomment for debugging
+      // const text = new TextDecoder().decode(bytes?.slice(4));
+      // console.log(`Got chunk = ${text}`);
+      writer.write(bytes?.slice(4));
     }
 
     await writer.close();
