@@ -17,6 +17,7 @@
     "@clinia-ui/react": "^0.1.8",
     "@clinia/search-sdk-core": "^0.1.0",
     "@clinia/search-sdk-react": "^0.1.0",
+    "@clinia/tritonclient": "^1.0.0",
     "@uidotdev/usehooks": "^2.4.1",
     "@vercel/otel": "^1.5.0",
     "clsx": "^2.1.0",

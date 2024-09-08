@@ -20,6 +20,9 @@ dependencies:
   '@clinia/search-sdk-react':
     specifier: ^0.1.0
     version: 0.1.0(react@18.2.0)
+  '@clinia/tritonclient':
+    specifier: ^1.0.0
+    version: 1.0.0(@bufbuild/protobuf@1.10.0)
   '@uidotdev/usehooks':
     specifier: ^2.4.1
     version: 2.4.1(react-dom@18.2.0)(react@18.2.0)
@@ -392,6 +395,10 @@ packages:
       '@babel/helper-validator-identifier': 7.22.20
       to-fast-properties: 2.0.0
 
+  /@bufbuild/protobuf@1.10.0:
+    resolution: {integrity: sha512-QDdVFLoN93Zjg36NoQPZfsVH9tZew7wKDKyV5qRdj8ntT4wQCOradQjRaTdwMhWUYsgKsvCINKKm87FdEk96Ag==}
+    dev: false
+
   /@clinia-ui/icons@0.1.8(react@18.2.0):
     resolution: {integrity: sha512-C0IWMJNaNcK77oMejE78PN+7QVkMFj+57RGQO7gw23Aw+aW3DCZfFXwcy4VVHuEVXWf/J2RHkAh4nDo0UA8ygg==, tarball: https://npm.pkg.github.com/download/@clinia-ui/icons/0.1.8/ec4e78aa87f4a497324800a505decb841fc9ab4b}
     peerDependencies:
@@ -458,7 +465,7 @@ packages:
   /@clinia/client-common@1.0.8-edge-174a580.0:
     resolution: {integrity: sha512-q8eI0+LlAWmT0v3Ch6/6rauKHNbLcpXrn59bAmfTmIMISWxzVLB56rAbab9a8b+8mcFp8+CODwvp1CV5oRhksA==, tarball: https://npm.pkg.github.com/download/@clinia/client-common/1.0.8-edge-174a580.0/cf1a278ceaa0741f5f3103ed5dd258589f32ba93}
     dependencies:
-      typescript: 5.4.2
+      typescript: 5.5.4
     dev: false
 
   /@clinia/search-sdk-core@0.1.0:
@@ -483,6 +490,17 @@ packages:
       rxjs: 7.8.1
     dev: false
 
+  /@clinia/tritonclient@1.0.0(@bufbuild/protobuf@1.10.0):
+    resolution: {integrity: sha512-ov5CS8RpnsBBSXUtDsrWm+Ble3Vv888pPKFVqbPPZlEG4lRlcbhsHfvIqloG1yY4FzmkgYVyqOplQQCL6xLlVg==, tarball: https://npm.pkg.github.com/download/@clinia/tritonclient/1.0.0/f0f2dc8a45125eb400fd57c41a1dcd1a5c8f8edc}
+    dependencies:
+      '@connectrpc/connect': 1.4.0(@bufbuild/protobuf@1.10.0)
+      '@connectrpc/connect-node': 1.4.0(@bufbuild/protobuf@1.10.0)(@connectrpc/connect@1.4.0)
+      '@connectrpc/connect-web': 1.4.0(@bufbuild/protobuf@1.10.0)(@connectrpc/connect@1.4.0)
+      uuid: 10.0.0
+    transitivePeerDependencies:
+      - '@bufbuild/protobuf'
+    dev: false
+
   /@clinia/util-react@0.1.0(react@18.2.0):
     resolution: {integrity: sha512-KUT4gyLXKFB/Zuv8FPzBWCL98GESRIIWAgem/Uy742QijMrStjgEWxlPfN3iL6ct14wJkvVq9otrz6nIPSLCzQ==, tarball: https://npm.pkg.github.com/download/@clinia/util-react/0.1.0/f7721e7c71bd700e70b48d110cf0c0fc09a2bdb8}
     peerDependencies:
@@ -494,6 +512,36 @@ packages:
 
   /@clinia/util@0.1.0:
     resolution: {integrity: sha512-IKQSSKC1Xw8OQtpOoP804azhnoWjkPcJFZlmqxUZPViY7bHl93hQdnCmjMPlYvMmjEKxxNOBrGP40DFN8MOtYw==, tarball: https://npm.pkg.github.com/download/@clinia/util/0.1.0/5ed8df2c1bcc9e2fd4ad0e28d1b5ed2a9c96b087}
+    dev: false
+
+  /@connectrpc/connect-node@1.4.0(@bufbuild/protobuf@1.10.0)(@connectrpc/connect@1.4.0):
+    resolution: {integrity: sha512-0ANnrr6SvsjevsWEgdzHy7BaHkluZyS6s4xNoVt7RBHFR5V/kT9lPokoIbYUOU9JHzdRgTaS3x5595mwUsu15g==}
+    engines: {node: '>=16.0.0'}
+    peerDependencies:
+      '@bufbuild/protobuf': ^1.4.2
+      '@connectrpc/connect': 1.4.0
+    dependencies:
+      '@bufbuild/protobuf': 1.10.0
+      '@connectrpc/connect': 1.4.0(@bufbuild/protobuf@1.10.0)
+      undici: 5.28.4
+    dev: false
+
+  /@connectrpc/connect-web@1.4.0(@bufbuild/protobuf@1.10.0)(@connectrpc/connect@1.4.0):
+    resolution: {integrity: sha512-13aO4psFbbm7rdOFGV0De2Za64DY/acMspgloDlcOKzLPPs0yZkhp1OOzAQeiAIr7BM/VOHIA3p8mF0inxCYTA==}
+    peerDependencies:
+      '@bufbuild/protobuf': ^1.4.2
+      '@connectrpc/connect': 1.4.0
+    dependencies:
+      '@bufbuild/protobuf': 1.10.0
+      '@connectrpc/connect': 1.4.0(@bufbuild/protobuf@1.10.0)
+    dev: false
+
+  /@connectrpc/connect@1.4.0(@bufbuild/protobuf@1.10.0):
+    resolution: {integrity: sha512-vZeOkKaAjyV4+RH3+rJZIfDFJAfr+7fyYr6sLDKbYX3uuTVszhFe9/YKf5DNqrDb5cKdKVlYkGn6DTDqMitAnA==}
+    peerDependencies:
+      '@bufbuild/protobuf': ^1.4.2
+    dependencies:
+      '@bufbuild/protobuf': 1.10.0
     dev: false
 
   /@esbuild/aix-ppc64@0.19.12:
@@ -739,6 +787,11 @@ packages:
     resolution: {integrity: sha512-Ys+3g2TaW7gADOJzPt83SJtCDhMjndcDMFVQ/Tj9iA1BfJzFKD9mAUXT3OenpuPHbI6P/myECxRJrofUsDx/5g==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     dev: true
+
+  /@fastify/busboy@2.1.1:
+    resolution: {integrity: sha512-vBZP4NlzfOlerQTnba4aqZoMhE/a9HY7HRqoOPaETQcSQuWEIyZMHGfVu6w9wGtGK5fED5qRs2DteVCjOH60sA==}
+    engines: {node: '>=14'}
+    dev: false
 
   /@floating-ui/core@1.6.0:
     resolution: {integrity: sha512-PcF++MykgmTj3CIyOQbKA/hDzOAiqI3mhuoN44WRCopIs1sgoDoU4oty4Jtqaj/y3oDU6fnVSm4QG0a3t5i0+g==}
@@ -8534,8 +8587,8 @@ packages:
     hasBin: true
     dev: true
 
-  /typescript@5.4.2:
-    resolution: {integrity: sha512-+2/g0Fds1ERlP6JsakQQDXjZdZMM+rqpamFZJEKh4kwTIn3iDkgKtby0CeNd5ATNZ4Ry1ax15TMx0W2V+miizQ==}
+  /typescript@5.5.4:
+    resolution: {integrity: sha512-Mtq29sKDAEYP7aljRgtPOpTvOfbwRWlS6dPRzwjdE+C0R4brX/GUyhHSecbHMFLNBLcJIPt9nl9yG5TZ1weH+Q==}
     engines: {node: '>=14.17'}
     hasBin: true
     dev: false
@@ -8555,6 +8608,13 @@ packages:
 
   /undici-types@5.26.5:
     resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
+
+  /undici@5.28.4:
+    resolution: {integrity: sha512-72RFADWFqKmUb2hmmvNODKL3p9hcB6Gt2DOQMis1SEBaV6a4MH8soBvzg+95CYhCKPFedut2JY9bMfrDl9D23g==}
+    engines: {node: '>=14.0'}
+    dependencies:
+      '@fastify/busboy': 2.1.1
+    dev: false
 
   /unified@11.0.4:
     resolution: {integrity: sha512-apMPnyLjAX+ty4OrNap7yumyVAMlKx5IWU2wlzzUdYJO9A8f1p9m/gywF/GM2ZDFcjQPrx59Mc90KwmxsoklxQ==}
@@ -8683,6 +8743,11 @@ packages:
 
   /util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
+
+  /uuid@10.0.0:
+    resolution: {integrity: sha512-8XkAphELsDnEGrDxUOHB3RGvXz6TeuYSGEZBOjtTtPm2lwhGBjLgOzLHB63IUWfBpNucQjND6d3AOudO+H3RWQ==}
+    hasBin: true
+    dev: false
 
   /vfile-message@4.0.2:
     resolution: {integrity: sha512-jRDZ1IMLttGj41KcZvlrYAaI3CfqpLpfpf+Mfig13viT6NKvRzWZ+lXz0Y5D60w6uJIBAOGq9mSHf0gktF0duw==}
