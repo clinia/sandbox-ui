@@ -5,7 +5,8 @@ import { PassageHighlight } from './highlight';
 import { useSearchLayout } from './search-layout';
 
 export const ArticleHit = ({ hit }: { hit: Hit<Article> }) => {
-  // const passageHighlight = hit.highlight.find((h) => h.type === 'passage');
+  const abstractPassages = hit.highlighting?.['abstract.passages'].slice(0, 1);
+  console.log(abstractPassages);
   const searchLayout = useSearchLayout();
 
   return (
@@ -16,8 +17,11 @@ export const ArticleHit = ({ hit }: { hit: Hit<Article> }) => {
       }}
     >
       <h1 className="mb-2 text-lg font-medium text-foreground">
-        {hit.resource.title}
+        {hit.resource.data.title}
       </h1>
+      <p className="text-sm text-muted-foreground">
+        {abstractPassages?.[0].highlight}
+      </p>
       {/* {passageHighlight && <PassageHighlight highlight={passageHighlight} />} */}
     </article>
   );

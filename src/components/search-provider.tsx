@@ -43,14 +43,25 @@ export const SearchProvider = ({ children, state }: SearchProviderProps) => {
       collectionKey: 'articles',
       v1SearchParameters: {
         page: 0,
-        perPage: 10,
+        perPage: 5,
         query: {
-          match: {
-            'abstract.passages': {
-              value: params.query ?? '',
-              type: 'word',
+          or: [
+            {
+              match: {
+                'abstract.passages': {
+                  value: params.query ?? '',
+                  type: 'word',
+                },
+              },
             },
-          },
+            {
+              knn: {
+                'abstract.passages.vector': {
+                  value: params.query ?? '',
+                },
+              },
+            },
+          ],
         },
         highlighting: ['abstract.passages'],
       },

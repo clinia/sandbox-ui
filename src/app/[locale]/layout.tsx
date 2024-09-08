@@ -28,8 +28,8 @@ export default function LocaleLayout({
         className={cn('bg-background font-sans antialiased', fontSans.variable)}
       >
         <I18nProvider locale={locale}>
-          <Sidebar />
-          <main className="absolute left-0 right-0 overflow-auto sm:left-56">
+          {/* <Sidebar /> */}
+          <main className="absolute left-0 right-0 overflow-auto">
             {children}
           </main>
         </I18nProvider>

@@ -33,9 +33,18 @@ export const ArticleDrawer = () => {
       <div className="absolute left-0 h-[calc(100vh-48px)] w-full overflow-y-auto pt-[48px]">
         <div className="px-4 py-6">
           <h1 className="mb-4 text-xl font-medium text-foreground">
-            {searchLayout.hit.resource.title}
+            {searchLayout.hit.resource.data.title}
           </h1>
-          {searchLayout.hit.highlight.map((highlight, idx) => (
+          <h2 className="text-lg">Abstract</h2>
+          <p className="text-sm">{searchLayout.hit.resource.data.abstract}</p>
+
+          {searchLayout.hit.resource.data.content.map((content) => (
+            <div key={content.title}>
+              <h2 className="text-lg">{content.title}</h2>
+              <p className="text-sm">{content.text}</p>
+            </div>
+          ))}
+          {/* {searchLayout.hit.highlight.map((highlight, idx) => (
             <Markdown
               components={{
                 h1: (props) => (
@@ -56,14 +65,7 @@ export const ArticleDrawer = () => {
               {highlight.match}
             </Markdown>
             // <PassageHighlight key={idx} highlight={highlight} />
-          ))}
-          <div className="py-6 pl-[-4px]">
-            <Button variant="link">
-              <Link href={`/articles/${searchLayout.hit.resource.id}`}>
-                View full article
-              </Link>
-            </Button>
-          </div>
+          ))} */}
         </div>
       </div>
     </div>

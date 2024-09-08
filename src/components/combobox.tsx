@@ -30,25 +30,25 @@ export const ComboBox = ({
   const router = useRouter();
   const pathname = usePathname();
 
-  const groups = useMemo(
-    () => [
-      {
-        heading: t('searchbox.groups.ask.heading'),
-        icon: <Sparkles size={14} className="stroke-primary" />,
-        items: [
-          'How long to prepare for ACLR?',
-          'Recovery time for ACLR',
-          'How to treat a torn meniscus?',
-        ],
-      },
-      {
-        heading: t('searchbox.groups.search.heading'),
-        icon: <Search size={14} />,
-        items: ['ACL recovery'],
-      },
-    ],
-    [t]
-  );
+  // const groups = useMemo(
+  //   () => [
+  //     {
+  //       heading: t('searchbox.groups.ask.heading'),
+  //       icon: <Sparkles size={14} className="stroke-primary" />,
+  //       items: [
+  //         'How long to prepare for ACLR?',
+  //         'Recovery time for ACLR',
+  //         'How to treat a torn meniscus?',
+  //       ],
+  //     },
+  //     {
+  //       heading: t('searchbox.groups.search.heading'),
+  //       icon: <Search size={14} />,
+  //       items: ['ACL recovery'],
+  //     },
+  //   ],
+  //   [t]
+  // );
 
   const ref = useClickAway<HTMLDivElement>(() => setOpen(false));
 
@@ -71,7 +71,7 @@ export const ComboBox = ({
         }}
       />
 
-      <CommandList>
+      {/* <CommandList>
         {open && (
           <>
             <CommandEmpty>No results found.</CommandEmpty>
@@ -98,7 +98,7 @@ export const ComboBox = ({
             ))}
           </>
         )}
-      </CommandList>
+      </CommandList> */}
     </Command>
   );
 };

@@ -10,36 +10,31 @@ export type SearchResponse<T = Resource> = {
   hits: Hit<T>[];
   meta: {
     queryId: string;
-    queryIntent: 'QUESTION';
-    questions: string[];
   };
 };
 
 export type Hit<T = Resource> = {
   resource: T;
-  highlight: Highlight[];
-  enrichers: Enrichers;
+  highlighting?: Record<string, Highlight[]>;
 };
 
 export type Resource = {
   id: string;
-  [key: string]: any;
 };
 
 export type Article = Resource & {
-  title: string;
-  text: string;
+  data: {
+    title: string;
+    abstract: string;
+    content: [
+      {
+        title: string;
+        text: string;
+      },
+    ];
+  };
 };
 
 export type Highlight = {
-  match: string;
-  startOffset: number;
-  endOffset: number;
-  type: 'passage' | 'sentence';
-  highlight?: Highlight;
-  score: number;
-};
-
-export type Enrichers = {
-  questions: string[];
+  highlight: string;
 };
