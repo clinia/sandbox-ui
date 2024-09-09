@@ -1,14 +1,37 @@
 'use client';
 
+import { HitsHighlight } from '@/lib/client';
+import { getHighlightText } from '@/lib/client/util';
 import { X } from 'lucide-react';
-import Markdown from 'react-markdown';
-import Link from 'next/link';
+import { useMemo } from 'react';
 import { Button } from '@clinia-ui/react';
-import { PassageHighlight } from './highlight';
+import { HtmlDisplay } from './html-display';
 import { useSearchLayout } from './search-layout';
 
 export const ArticleDrawer = () => {
   const searchLayout = useSearchLayout();
+
+  const hitsToDisplay = useMemo((): string[] => {
+    const allhighlights = Object.values(
+      searchLayout.hit?.highlighting ?? {}
+    ).flat();
+    if (allhighlights.length === 0) {
+      return [];
+    }
+
+    const hitsHighlights = allhighlights.filter(
+      (highlight): highlight is HitsHighlight =>
+        'type' in highlight && highlight.type === 'hits'
+    );
+    if (hitsHighlights.length === 0) {
+      return allhighlights.map(getHighlightText);
+    }
+
+    // We display the hits by score
+    return hitsHighlights
+      .sort((a, b) => b.score - a.score)
+      .map(getHighlightText);
+  }, [searchLayout.hit?.highlighting]);
 
   if (!searchLayout.hit) {
     return null;
@@ -33,37 +56,16 @@ export const ArticleDrawer = () => {
       <div className="absolute left-0 h-[calc(100vh-48px)] w-full overflow-y-auto pt-[48px]">
         <div className="px-4 py-6">
           <h1 className="mb-4 text-xl font-medium text-foreground">
-            {searchLayout.hit.resource.title}
+            {searchLayout.hit.resource.data.title}
           </h1>
-          {searchLayout.hit.highlight.map((highlight, idx) => (
-            <Markdown
-              components={{
-                h1: (props) => (
-                  <h1
-                    className="mb-3 text-xl font-medium text-foreground"
-                    {...props}
-                  />
-                ),
-                h2: (props) => (
-                  <h2 className="mb-2 text-lg font-medium" {...props} />
-                ),
-                h3: (props) => (
-                  <h3 className="mb-1 text-base font-medium" {...props} />
-                ),
-              }}
+
+          {hitsToDisplay.map((highlight, idx) => (
+            <HtmlDisplay
+              className="my-4 whitespace-pre-line text-sm [&_em]:font-bold"
               key={idx}
-            >
-              {highlight.match}
-            </Markdown>
-            // <PassageHighlight key={idx} highlight={highlight} />
+              html={highlight}
+            />
           ))}
-          <div className="py-6 pl-[-4px]">
-            <Button variant="link">
-              <Link href={`/articles/${searchLayout.hit.resource.id}`}>
-                View full article
-              </Link>
-            </Button>
-          </div>
         </div>
       </div>
     </div>

@@ -2,22 +2,20 @@
 
 import { Sparkles } from 'lucide-react';
 import { twMerge } from 'tailwind-merge';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Markdown from 'react-markdown';
+import { V1Hit } from '@clinia/client-common';
+import { useHits, useQuery } from '@clinia/search-sdk-react';
 import styles from './assistant.module.css';
-import { useEventSource, useEventSourceListener } from './use-event-source';
-import { useMeta } from './use-meta';
+import { useStreamRequest } from './use-stream-request';
 
 export type AssistantProps = {
   className?: string;
 };
 
 export const Assistant = ({ className }: AssistantProps) => {
-  const meta = useMeta();
-
-  if (meta.queryIntent !== 'QUESTION' || !meta.queryId) {
-    return null;
-  }
+  const hits = useHits();
+  const [query] = useQuery();
 
   return (
     <div className={twMerge('rounded-lg border p-6', className)}>
@@ -26,7 +24,7 @@ export const Assistant = ({ className }: AssistantProps) => {
         <h1 className="text-base font-medium text-primary">Assistant</h1>
       </header>
       <div>
-        <AssistantListener queryId={meta.queryId} />
+        <AssistantListener hits={hits as any} query={query} />
       </div>
       <footer></footer>
     </div>
@@ -34,29 +32,53 @@ export const Assistant = ({ className }: AssistantProps) => {
 };
 
 type AssistantListenerProps = {
-  queryId: string;
+  query: string;
+  hits: V1Hit[];
 };
-const AssistantListener = ({ queryId }: AssistantListenerProps) => {
+const AssistantListener = ({ hits, query }: AssistantListenerProps) => {
   const [summary, setSummary] = useState('');
+  const queryRef = useRef(query);
 
-  // Reset summary every time the query ID change
-  useEffect(() => setSummary(''), [queryId]);
+  useEffect(() => {
+    // We store the query in a ref so that we only refetch the assistant when new articles are coming.
+    // This avoids doing a double-query in between the request-response from the query API.
+    queryRef.current = query;
+    setSummary('');
+  }, [query]);
 
-  const [eventSource, eventSourceStatus] = useEventSource(
-    `/api/query/${queryId}/answer`,
-    true
+  const { refetch, status } = useStreamRequest(
+    useCallback(
+      (chunk: string) => {
+        setSummary((s) => s + chunk);
+      },
+      [setSummary]
+    )
   );
-  useEventSourceListener(
-    eventSource,
-    ['message'],
-    (evt) => {
-      setSummary((s) => s + evt.data);
-    },
-    [setSummary]
-  );
+
+  // Reset summary every time the query changes
+  useEffect(() => {
+    if (hits.length === 0) return;
+    const passages = hits.flatMap((h) =>
+      (h.highlighting?.['abstract.passages'] ?? []).slice(0, 1).map((x) =>
+        JSON.stringify({
+          id: h.resource.id,
+          text: '',
+          title: h.resource.data.title,
+          passages: [x.highlight],
+        })
+      )
+    );
+    refetch(`/api/assistant`, {
+      method: 'POST',
+      body: JSON.stringify({
+        query: queryRef.current,
+        articles: passages.slice(0, 3),
+      }),
+    });
+  }, [hits, refetch]);
 
   const classnames = [];
-  if (eventSourceStatus === 'open' || eventSourceStatus === 'init') {
+  if (status === 'loading' || status === 'idle') {
     classnames.push(styles.type);
   }
 
@@ -75,5 +97,4 @@ const AssistantListener = ({ queryId }: AssistantListenerProps) => {
       {summary}
     </Markdown>
   );
-  //   return <p className={classnames.join(' ')}>{summary}</p>;
 };

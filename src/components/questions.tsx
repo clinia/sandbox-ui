@@ -1,9 +1,7 @@
 'use client';
 
 import { twMerge } from 'tailwind-merge';
-import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { useMeta } from './use-meta';
 
 type QuestionsProps = {
   className?: string;
@@ -34,15 +32,15 @@ export const Questions = ({ title, questions, className }: QuestionsProps) => {
   );
 };
 
-export const QuestionsResult = () => {
-  const meta = useMeta();
-  const t = useTranslations();
+// export const QuestionsResult = () => {
+//   const meta = useMeta();
+//   const t = useTranslations();
 
-  if (!meta?.questions || meta.questions.length === 0) {
-    return null;
-  }
+//   if (!meta?.questions || meta.questions.length === 0) {
+//     return null;
+//   }
 
-  return (
-    <Questions title={t('search.followUp.title')} questions={meta.questions} />
-  );
-};
+//   return (
+//     <Questions title={t('search.followUp.title')} questions={meta.questions} />
+//   );
+// };

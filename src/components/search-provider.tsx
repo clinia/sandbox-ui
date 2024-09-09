@@ -1,8 +1,8 @@
 'use client';
 
 import { SearchRequest, SearchResponse } from '@/lib/client';
-import { client } from '@/lib/info-poc-client';
 import { PropsWithChildren, use, useCallback, useEffect, useMemo } from 'react';
+import client from '@clinia/client-datapartition';
 import {
   SearchParameters,
   type SearchSDKOptions,
@@ -17,19 +17,57 @@ type SearchProviderProps = PropsWithChildren<{
   };
 }>;
 
+const datapartitionClient = client(
+  'clinia',
+  {
+    mode: 'BearerToken',
+    bearerToken: '',
+  },
+  {
+    hosts: [
+      {
+        url: 'localhost:3100/api',
+        protocol: 'http',
+        accept: 'readWrite',
+      },
+    ],
+  }
+);
+
 export const SearchProvider = ({ children, state }: SearchProviderProps) => {
   const search: SearchSDKOptions['search'] = async (_collection, params) => {
-    const resp = await client.search({ query: params.query ?? '' });
-    return {
-      hits: resp.hits,
-      meta: {
-        numPages: 1,
-        page: 1,
-        perPage: 10,
-        total: resp.hits.length,
-        ...resp.meta,
+    const resp = await datapartitionClient.searchClient.query<
+      Record<string, any>
+    >({
+      partitionKey: 'clinia',
+      collectionKey: 'articles',
+      v1SearchParameters: {
+        page: 0,
+        perPage: 5,
+        query: {
+          or: [
+            {
+              match: {
+                'abstract.passages': {
+                  value: params.query ?? '',
+                  type: 'word',
+                },
+              },
+            },
+            {
+              knn: {
+                'abstract.passages.vector': {
+                  value: params.query ?? '',
+                },
+              },
+            },
+          ],
+        },
+        highlighting: ['abstract.passages'],
       },
-    };
+    });
+    // const resp = await client.search({ query: params.query ?? '' });
+    return resp;
   };
 
   const searchForFacets: SearchSDKOptions['searchForFacets'] =

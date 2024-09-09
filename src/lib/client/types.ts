@@ -10,36 +10,46 @@ export type SearchResponse<T = Resource> = {
   hits: Hit<T>[];
   meta: {
     queryId: string;
-    queryIntent: 'QUESTION';
-    questions: string[];
   };
 };
 
 export type Hit<T = Resource> = {
   resource: T;
-  highlight: Highlight[];
-  enrichers: Enrichers;
+  highlighting?: Record<string, Highlight[]>;
 };
 
 export type Resource = {
   id: string;
-  [key: string]: any;
 };
 
 export type Article = Resource & {
-  title: string;
-  text: string;
+  data: {
+    title: string;
+    abstract: string;
+    content: [
+      {
+        title: string;
+        text: string;
+      },
+    ];
+  };
 };
 
-export type Highlight = {
-  match: string;
-  startOffset: number;
-  endOffset: number;
-  type: 'passage' | 'sentence';
-  highlight?: Highlight;
+// Display a dumb fallback. We would ideally show `data` but if it's not respecting that shape let's fallback to `highlight`.
+export type Highlight =
+  | {
+      highlight: string;
+    }
+  | {
+      type: 'text';
+      highlight: string;
+    }
+  | HitsHighlight;
+
+export type HitsHighlight = {
+  type: 'hits';
   score: number;
-};
-
-export type Enrichers = {
-  questions: string[];
+  data: string;
+  // content.0.passages.0
+  path: string;
 };

@@ -11,7 +11,7 @@ export type EventSourceStatus = 'init' | 'open' | 'closed' | 'error';
 export type EventSourceEvent = Event & { data: string };
 
 export function useEventSource(
-  url: string,
+  url?: string,
   withCredentials?: boolean,
   ESClass: EventSourceConstructor = EventSource
 ) {

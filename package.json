@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3100",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -15,8 +15,11 @@
     "@auth0/nextjs-auth0": "^3.5.0",
     "@clinia-ui/icons": "^0.1.8",
     "@clinia-ui/react": "^0.1.8",
+    "@clinia/client-common": "1.0.10-hgs-84d73454.0",
+    "@clinia/client-datapartition": "1.0.10-hgs-84d73454.0",
     "@clinia/search-sdk-core": "^0.1.0",
     "@clinia/search-sdk-react": "^0.1.0",
+    "@clinia/tritonclient": "^1.0.0",
     "@uidotdev/usehooks": "^2.4.1",
     "@vercel/otel": "^1.5.0",
     "clsx": "^2.1.0",
@@ -29,7 +32,9 @@
     "react-dom": "^18",
     "react-hook-form": "7.48.2",
     "react-markdown": "^9.0.1",
-    "tailwind-merge": "^2.2.1"
+    "sanitize-html": "^2.13.0",
+    "tailwind-merge": "^2.2.1",
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
     "@testing-library/react": "^14.2.1",
@@ -38,6 +43,8 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/sanitize-html": "^2.13.0",
+    "@types/uuid": "^10.0.0",
     "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "^10.0.1",
     "eslint": "^8",
