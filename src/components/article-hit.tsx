@@ -1,6 +1,6 @@
 'use client';
 
-import { Article, Hit } from '@/lib/client';
+import { Article, Hit, HitsHighlight } from '@/lib/client';
 import { useMemo } from 'react';
 import { getHighlightText } from '../lib/client/util';
 import { HtmlDisplay } from './html-display';
@@ -16,7 +16,8 @@ export const ArticleHit = ({ hit }: { hit: Hit<Article> }) => {
       return undefined;
     }
     const hitsHighlights = allHighlights.filter(
-      (highlight) => 'type' in highlight && highlight.type === 'hits'
+      (highlight): highlight is HitsHighlight =>
+        'type' in highlight && highlight.type === 'hits'
     );
     if (hitsHighlights.length === 0) {
       // We fallback to displaying the first text highlight

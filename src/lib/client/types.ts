@@ -44,10 +44,12 @@ export type Highlight =
       type: 'text';
       highlight: string;
     }
-  | {
-      type: 'hits';
-      score: number;
-      data: string;
-      // content.0.passages.0
-      path: string;
-    };
+  | HitsHighlight;
+
+export type HitsHighlight = {
+  type: 'hits';
+  score: number;
+  data: string;
+  // content.0.passages.0
+  path: string;
+};

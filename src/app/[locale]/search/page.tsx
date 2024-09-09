@@ -1,6 +1,5 @@
 import { Assistant } from '@/components/assistant';
 import { Hits } from '@/components/hits';
-import { QuestionsResult } from '@/components/questions';
 import { SearchProvider } from '@/components/search-provider';
 import { SearchBox } from '@/components/searchbox';
 

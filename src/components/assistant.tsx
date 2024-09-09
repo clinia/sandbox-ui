@@ -46,6 +46,16 @@ const AssistantListener = ({ hits, query }: AssistantListenerProps) => {
     setSummary('');
   }, [query]);
 
+  const { refetch, status } = useStreamRequest(
+    useCallback(
+      (chunk: string) => {
+        console.log(chunk);
+        setSummary((s) => s + chunk);
+      },
+      [setSummary]
+    )
+  );
+
   // Reset summary every time the query changes
   useEffect(() => {
     if (hits.length === 0) return;
@@ -70,17 +80,8 @@ const AssistantListener = ({ hits, query }: AssistantListenerProps) => {
         articles: passages.slice(0, 3),
       }),
     });
-  }, [hits]);
+  }, [hits, refetch]);
 
-  const { refetch, status } = useStreamRequest(
-    useCallback(
-      (chunk: string) => {
-        console.log(chunk);
-        setSummary((s) => s + chunk);
-      },
-      [setSummary]
-    )
-  );
   const classnames = [];
   if (status === 'loading' || status === 'idle') {
     classnames.push(styles.type);

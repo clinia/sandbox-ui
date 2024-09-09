@@ -1,5 +1,6 @@
 'use client';
 
+import { HitsHighlight } from '@/lib/client';
 import { getHighlightText } from '@/lib/client/util';
 import { X } from 'lucide-react';
 import { useMemo } from 'react';
@@ -19,7 +20,8 @@ export const ArticleDrawer = () => {
     }
 
     const hitsHighlights = allhighlights.filter(
-      (highlight) => 'type' in highlight && highlight.type === 'hits'
+      (highlight): highlight is HitsHighlight =>
+        'type' in highlight && highlight.type === 'hits'
     );
     if (hitsHighlights.length === 0) {
       return allhighlights.map(getHighlightText);
