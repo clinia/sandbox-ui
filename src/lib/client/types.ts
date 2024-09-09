@@ -35,6 +35,19 @@ export type Article = Resource & {
   };
 };
 
-export type Highlight = {
-  highlight: string;
-};
+// Display a dumb fallback. We would ideally show `data` but if it's not respecting that shape let's fallback to `highlight`.
+export type Highlight =
+  | {
+      highlight: string;
+    }
+  | {
+      type: 'text';
+      highlight: string;
+    }
+  | {
+      type: 'hits';
+      score: number;
+      data: string;
+      // content.0.passages.0
+      path: string;
+    };
