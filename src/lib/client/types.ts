@@ -47,7 +47,7 @@ export type Highlight =
   | HitsHighlight;
 
 export type HitsHighlight = {
-  type: 'hits';
+  type: 'vector';
   score: number;
   data: string;
   // content.0.passages.0

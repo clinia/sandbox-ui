@@ -57,7 +57,7 @@ export const SearchProvider = ({ children, state }: SearchProviderProps) => {
               match: {
                 'abstract.passages': {
                   value: params.query ?? '',
-                  type: 'word',
+                  type: 'phrase',
                 },
               },
             },
@@ -68,12 +68,31 @@ export const SearchProvider = ({ children, state }: SearchProviderProps) => {
                 },
               },
             },
+            {
+              match: {
+                title: {
+                  value: params.query ?? '',
+                  type: 'word',
+                },
+              },
+            },
+            {
+              knn: {
+                'content.text.passages.vector': {
+                  value: params.query ?? '',
+                },
+              },
+            },
           ],
         },
-        highlighting: ['abstract.passages'],
+        highlighting: [
+          'abstract.passages',
+          'abstract.passages.vector',
+          'title',
+          'content.text.passages.vector',
+        ],
       },
     });
-    // const resp = await client.search({ query: params.query ?? '' });
     return resp;
   };
 

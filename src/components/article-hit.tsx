@@ -17,7 +17,7 @@ export const ArticleHit = ({ hit }: { hit: Hit<Article> }) => {
     }
     const hitsHighlights = allHighlights.filter(
       (highlight): highlight is HitsHighlight =>
-        'type' in highlight && highlight.type === 'hits'
+        'type' in highlight && highlight.type === 'vector'
     );
     if (hitsHighlights.length === 0) {
       // We fallback to displaying the first text highlight
