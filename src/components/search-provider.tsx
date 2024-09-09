@@ -1,15 +1,14 @@
 'use client';
 
 import { SearchRequest, SearchResponse } from '@/lib/client';
-import { PropsWithChildren, use, useCallback, useEffect, useMemo } from 'react';
+import { PropsWithChildren, useCallback, useMemo } from 'react';
 import { Host } from '@clinia/client-common';
 import client from '@clinia/client-datapartition';
 import {
   SearchParameters,
   type SearchSDKOptions,
 } from '@clinia/search-sdk-core';
-import { SearchSDKProvider } from '@clinia/search-sdk-react';
-import { Collection } from '@clinia/search-sdk-react';
+import { Collection, SearchSDKProvider } from '@clinia/search-sdk-react';
 
 type SearchProviderProps = PropsWithChildren<{
   state?: {
@@ -19,7 +18,7 @@ type SearchProviderProps = PropsWithChildren<{
 }>;
 
 const getHost = (): Host => {
-  const url = new URL(`${process.env.NEXT_PUBLIC_BASE_URL}`);
+  const url = new URL(window.location.origin);
   if (url.host.endsWith('/')) {
     url.host = url.host.slice(0, -1);
   }
