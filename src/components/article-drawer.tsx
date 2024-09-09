@@ -32,18 +32,24 @@ export const ArticleDrawer = () => {
       </header>
       <div className="absolute left-0 h-[calc(100vh-48px)] w-full overflow-y-auto pt-[48px]">
         <div className="px-4 py-6">
+          {/* TODO: Loop over hit.hihglingting of type hits and render them
+            We will sanitize the html and render it as html
+          */}
           <h1 className="mb-4 text-xl font-medium text-foreground">
             {searchLayout.hit.resource.data.title}
           </h1>
+          {/* TODO: remove me */}
           <h2 className="text-lg">Abstract</h2>
           <p className="text-sm">{searchLayout.hit.resource.data.abstract}</p>
 
+          {/* TODO: remove me */}
           {searchLayout.hit.resource.data.content.map((content) => (
             <div key={content.title}>
               <h2 className="text-lg">{content.title}</h2>
               <p className="text-sm">{content.text}</p>
             </div>
           ))}
+
           {/* {searchLayout.hit.highlight.map((highlight, idx) => (
             <Markdown
               components={{
