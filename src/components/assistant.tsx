@@ -1,11 +1,12 @@
 'use client';
 
-import { Sparkles } from 'lucide-react';
+import { CircleAlertIcon, RefreshCw, Sparkles } from 'lucide-react';
 import { twMerge } from 'tailwind-merge';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Markdown from 'react-markdown';
 import { V1Hit } from '@clinia/client-common';
 import { useHits, useQuery } from '@clinia/search-sdk-react';
+import { Button } from '@clinia-ui/react';
 import styles from './assistant.module.css';
 import { useStreamRequest } from './use-stream-request';
 
@@ -16,6 +17,16 @@ export type AssistantProps = {
 export const Assistant = ({ className }: AssistantProps) => {
   const hits = useHits();
   const [query] = useQuery();
+  const [seenHits, setSeenHits] = useState(false);
+  useEffect(() => {
+    if (hits.length > 0) {
+      setSeenHits(true);
+    }
+  }, [hits]);
+
+  if (!seenHits) {
+    return null;
+  }
 
   return (
     <div className={twMerge('rounded-lg border p-6', className)}>
@@ -77,6 +88,11 @@ const AssistantListener = ({ hits, query }: AssistantListenerProps) => {
     });
   }, [hits, refetch]);
 
+  return <ErrorDisplay />;
+  if (status === 'error' || (status === 'success' && summary.trim() === '')) {
+    return <ErrorDisplay />;
+  }
+
   const classnames = [];
   if (status === 'loading' || status === 'idle') {
     classnames.push(styles.type);
@@ -96,5 +112,39 @@ const AssistantListener = ({ hits, query }: AssistantListenerProps) => {
     >
       {summary}
     </Markdown>
+  );
+};
+
+type ErrorDisplayProps = {
+  loading?: boolean;
+  onRetry?: () => void;
+  disabled?: boolean;
+};
+
+const ErrorDisplay = ({ disabled, loading, onRetry }: ErrorDisplayProps) => {
+  return (
+    <div className="flex items-center gap-2.5 rounded-lg bg-accent p-2.5 text-sm">
+      <CircleAlertIcon className="text-accent-foreground" />
+      <div className="flex flex-1 flex-col">
+        <h3 className="font-medium text-accent-foreground">
+          Couldn't generate a summary
+        </h3>
+        <p className="text-accent-foreground">
+          You can still browse results below, or try regenerating a summary
+        </p>
+      </div>
+      {onRetry ? (
+        <Button
+          type="button"
+          className="items-center justify-center gap-2"
+          loading={loading}
+          disabled={disabled}
+          onClick={onRetry}
+        >
+          <RefreshCw className="h-3.5 w-3.5" />
+          Retry
+        </Button>
+      ) : null}
+    </div>
   );
 };

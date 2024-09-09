@@ -13,8 +13,8 @@
   },
   "dependencies": {
     "@auth0/nextjs-auth0": "^3.5.0",
-    "@clinia-ui/icons": "^0.1.8",
-    "@clinia-ui/react": "^0.1.8",
+    "@clinia-ui/icons": "^0.1.22",
+    "@clinia-ui/react": "^0.1.22",
     "@clinia/client-common": "1.0.10-hgs-84d73454.0",
     "@clinia/client-datapartition": "1.0.10-hgs-84d73454.0",
     "@clinia/search-sdk-core": "^0.1.0",
