@@ -5,7 +5,7 @@ import { twMerge } from 'tailwind-merge';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Markdown from 'react-markdown';
 import { V1Hit } from '@clinia/client-common';
-import { useHits, useQuery } from '@clinia/search-sdk-react';
+import { useHits, useLoading, useQuery } from '@clinia/search-sdk-react';
 import { Button } from '@clinia-ui/react';
 import styles from './assistant.module.css';
 import { useStreamRequest } from './use-stream-request';
@@ -16,6 +16,7 @@ export type AssistantProps = {
 
 export const Assistant = ({ className }: AssistantProps) => {
   const hits = useHits();
+  const querying = useLoading();
   const [query] = useQuery();
   const [seenHits, setSeenHits] = useState(false);
   useEffect(() => {
@@ -35,7 +36,11 @@ export const Assistant = ({ className }: AssistantProps) => {
         <h1 className="text-base font-medium text-primary">Assistant</h1>
       </header>
       <div>
-        <AssistantListener hits={hits as any} query={query} />
+        <AssistantListener
+          querying={querying}
+          hits={hits as any}
+          query={query}
+        />
       </div>
       <footer></footer>
     </div>
@@ -44,10 +49,17 @@ export const Assistant = ({ className }: AssistantProps) => {
 
 type AssistantListenerProps = {
   query: string;
+  querying: boolean;
   hits: V1Hit[];
 };
-const AssistantListener = ({ hits, query }: AssistantListenerProps) => {
+const AssistantListener = ({
+  hits,
+  query,
+  querying,
+}: AssistantListenerProps) => {
   const [summary, setSummary] = useState('');
+  // Little hack to ensure we do not display the error message between assistant requests
+  const [disableErrors, setDisableErrors] = useState(true);
   const queryRef = useRef(query);
 
   useEffect(() => {
@@ -55,46 +67,42 @@ const AssistantListener = ({ hits, query }: AssistantListenerProps) => {
     // This avoids doing a double-query in between the request-response from the query API.
     queryRef.current = query;
     setSummary('');
+    setDisableErrors(true);
   }, [query]);
 
   const { refetch, status } = useStreamRequest(
     useCallback(
       (chunk: string) => {
-        setSummary((s) => s + chunk);
+        setSummary((s) => (s !== null ? s + chunk : chunk));
       },
       [setSummary]
     )
   );
 
-  // Reset summary every time the query changes
-  useEffect(() => {
-    if (hits.length === 0) return;
-    const passages = hits.flatMap((h) =>
-      (h.highlighting?.['abstract.passages'] ?? []).slice(0, 1).map((x) =>
-        JSON.stringify({
-          id: h.resource.id,
-          text: '',
-          title: h.resource.data.title,
-          passages: [x.highlight],
-        })
-      )
-    );
-    refetch(`/api/assistant`, {
-      method: 'POST',
-      body: JSON.stringify({
-        query: queryRef.current,
-        articles: passages.slice(0, 3),
-      }),
-    });
+  const handleRefetch = useCallback(() => {
+    refetchHandlerFromHits(hits, queryRef.current, refetch)?.();
   }, [hits, refetch]);
 
-  return <ErrorDisplay />;
-  if (status === 'error' || (status === 'success' && summary.trim() === '')) {
-    return <ErrorDisplay />;
+  useEffect(() => {
+    refetchHandlerFromHits(hits, queryRef.current, refetch)?.();
+    setDisableErrors(false);
+  }, [hits, refetch]);
+
+  if (
+    !querying &&
+    !disableErrors &&
+    (status === 'error' || (status === 'success' && summary.trim() === ''))
+  ) {
+    return (
+      <ErrorDisplay
+        disabled={['idle', 'loading'].includes(status)}
+        onRetry={handleRefetch}
+      />
+    );
   }
 
   const classnames = [];
-  if (status === 'loading' || status === 'idle') {
+  if (status === 'loading' || status === 'idle' || querying) {
     classnames.push(styles.type);
   }
 
@@ -116,12 +124,11 @@ const AssistantListener = ({ hits, query }: AssistantListenerProps) => {
 };
 
 type ErrorDisplayProps = {
-  loading?: boolean;
   onRetry?: () => void;
   disabled?: boolean;
 };
 
-const ErrorDisplay = ({ disabled, loading, onRetry }: ErrorDisplayProps) => {
+const ErrorDisplay = ({ disabled, onRetry }: ErrorDisplayProps) => {
   return (
     <div className="flex items-center gap-2.5 rounded-lg bg-accent p-2.5 text-sm">
       <CircleAlertIcon className="text-accent-foreground" />
@@ -137,7 +144,6 @@ const ErrorDisplay = ({ disabled, loading, onRetry }: ErrorDisplayProps) => {
         <Button
           type="button"
           className="items-center justify-center gap-2"
-          loading={loading}
           disabled={disabled}
           onClick={onRetry}
         >
@@ -147,4 +153,30 @@ const ErrorDisplay = ({ disabled, loading, onRetry }: ErrorDisplayProps) => {
       ) : null}
     </div>
   );
+};
+
+const refetchHandlerFromHits = (
+  hits: V1Hit[],
+  query: string,
+  refetch: (url: string, request: RequestInit) => Promise<void>
+): undefined | (() => void) => {
+  if (hits.length === 0) return undefined;
+  const passages = hits.flatMap((h) =>
+    (h.highlighting?.['abstract.passages'] ?? []).slice(0, 1).map((x) =>
+      JSON.stringify({
+        id: h.resource.id,
+        text: '',
+        title: h.resource.data.title,
+        passages: [x.highlight],
+      })
+    )
+  );
+  return () =>
+    refetch(`/api/assistant`, {
+      method: 'POST',
+      body: JSON.stringify({
+        query,
+        articles: passages.slice(0, 3),
+      }),
+    });
 };

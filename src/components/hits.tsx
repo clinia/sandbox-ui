@@ -1,13 +1,14 @@
 'use client';
 
 import { Article, Hit } from '@/lib/client';
-import { useHits } from '@clinia/search-sdk-react';
+import { useHits, useLoading } from '@clinia/search-sdk-react';
 import { ArticleHit } from './article-hit';
 
 export const Hits = () => {
   const hits = useHits() as Hit<Article>[];
+  const loading = useLoading();
 
-  if (hits.length === 0) {
+  if (hits.length === 0 || loading) {
     return null;
   }
 
