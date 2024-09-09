@@ -30,8 +30,6 @@ export const ArticleHit = ({ hit }: { hit: Hit<Article> }) => {
         .sort((a, b) => b.score - a.score)[0]
     );
   }, [hit]);
-  const abstractPassages = hit.highlighting?.['abstract.passages'].slice(0, 1);
-  console.log(abstractPassages);
   const searchLayout = useSearchLayout();
 
   return (

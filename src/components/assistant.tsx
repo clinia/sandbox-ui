@@ -49,7 +49,6 @@ const AssistantListener = ({ hits, query }: AssistantListenerProps) => {
   const { refetch, status } = useStreamRequest(
     useCallback(
       (chunk: string) => {
-        console.log(chunk);
         setSummary((s) => s + chunk);
       },
       [setSummary]
@@ -59,7 +58,6 @@ const AssistantListener = ({ hits, query }: AssistantListenerProps) => {
   // Reset summary every time the query changes
   useEffect(() => {
     if (hits.length === 0) return;
-    console.log(hits);
     const passages = hits.flatMap((h) =>
       (h.highlighting?.['abstract.passages'] ?? []).slice(0, 1).map((x) =>
         JSON.stringify({
@@ -69,9 +67,6 @@ const AssistantListener = ({ hits, query }: AssistantListenerProps) => {
           passages: [x.highlight],
         })
       )
-    );
-    console.log(
-      `Fetching assistant for ${queryRef.current} and ${JSON.stringify(passages, undefined, 4)}`
     );
     refetch(`/api/assistant`, {
       method: 'POST',

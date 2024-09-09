@@ -39,5 +39,6 @@ jobs:
       - name: Check format
         run: pnpm run format:check
 
-      - name: Test
-        run: pnpm run test
+      # Bring back when we have actual tests
+      # - name: Test
+      #   run: pnpm run test

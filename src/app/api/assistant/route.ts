@@ -1,9 +1,6 @@
-import { v4 as uuidv4 } from 'uuid';
 import type { NextRequest } from 'next/server';
 import { SummarizerClient } from '@clinia/tritonclient';
-import type { SearchResponse } from '../../../lib/client/types';
 
-const cache = new Map<string, ReturnType<SummarizerClient['streamAnswer']>>();
 export const dynamic = 'force-dynamic';
 
 const INFERENCE_URL = process.env.INFERENCE_URL ?? 'http://127.0.0.1:8001';
@@ -17,45 +14,27 @@ type InferParameter = {
     value: boolean;
   };
 };
-export async function GET(request: NextRequest) {
-  // Retrieve the query ID from the request
-  const queryId = request.nextUrl.searchParams.get('queryId');
-  if (!queryId) {
-    return new Response('Missing queryId', { status: 400 });
-  }
+const colors = [
+  '\x1b[31m', // Red
+  '\x1b[32m', // Green
+  '\x1b[33m', // Yellow
+  '\x1b[34m', // Blue
+  '\x1b[35m', // Magenta
+  '\x1b[36m', // Cyan
+  '\x1b[91m', // Bright Red
+  '\x1b[92m', // Bright Green
+  '\x1b[93m', // Bright Yellow
+  '\x1b[94m', // Bright Blue
+];
+const resetColor = '\x1b[0m'; // Reset color
 
-  let responseStream = new TransformStream();
-  const writer = responseStream.writable.getWriter();
-  const encoder = new TextEncoder();
+function getRandomColor(): string {
+  const randomIndex = Math.floor(Math.random() * colors.length);
+  return colors[randomIndex];
+}
 
-  const cachedStream = cache.get(queryId);
-  if (!cachedStream) {
-    return new Response('Query not found', { status: 404 });
-  }
-
-  (async () => {
-    for await (const chunk of cachedStream) {
-      // Assuming the text is in a property called 'text' in the chunk
-      const bytes = chunk.inferResponse?.rawOutputContents?.[0];
-      if (bytes === undefined || bytes.length <= 4) {
-        await writer.close();
-        return;
-      }
-
-      const text = new TextDecoder().decode(bytes?.slice(4));
-      writer.write(encoder.encode(`data: ${text}\n\n`));
-    }
-
-    await writer.close();
-  })();
-
-  return new Response(responseStream.readable, {
-    headers: {
-      'Content-Type': 'text/event-stream',
-      Connection: 'keep-alive',
-      'Cache-Control': 'no-cache, no-transform',
-    },
-  });
+function shrinkText(text: string, maxLength: number): string {
+  return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
 }
 
 export async function POST(request: NextRequest) {
@@ -64,12 +43,21 @@ export async function POST(request: NextRequest) {
     articles: string[];
     mode?: string;
   };
+  const maxChars = 25;
+  const start = Date.now();
+  const color = getRandomColor();
+  console.log(
+    `Received request with query: ${color}${shrinkText(query, maxChars)}${resetColor}`
+  );
+  const logEnd = () => {
+    console.log(
+      `Inference took ${'\x1b[36m'}${Date.now() - start}ms${resetColor} for query ${color}${shrinkText(query, maxChars)}${resetColor}`
+    );
+  };
 
   let responseStream = new TransformStream();
   const writer = responseStream.writable.getWriter();
-  const encoder = new TextEncoder();
 
-  console.log(`Query = ${query}, articles = ${articles}`);
   const answerStream = client.streamAnswer(
     MODEL_NAME,
     MODEL_VERSION,
@@ -84,7 +72,7 @@ export async function POST(request: NextRequest) {
       const isFinished: InferParameter | undefined = chunk.inferResponse
         ?.parameters['triton_final_response'] as InferParameter | undefined;
       if (isFinished?.parameterChoice.value) {
-        console.log('Final response received');
+        logEnd();
         await writer.close();
         return;
       }
@@ -101,6 +89,7 @@ export async function POST(request: NextRequest) {
       writer.write(bytes?.slice(4));
     }
 
+    logEnd();
     await writer.close();
   })();
 
