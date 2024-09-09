@@ -2,7 +2,7 @@
 
 import { Sparkles } from 'lucide-react';
 import { twMerge } from 'tailwind-merge';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Markdown from 'react-markdown';
 import { V1Hit } from '@clinia/client-common';
 import { useHits, useQuery } from '@clinia/search-sdk-react';
@@ -36,13 +36,18 @@ type AssistantListenerProps = {
   hits: V1Hit[];
 };
 const AssistantListener = ({ hits, query }: AssistantListenerProps) => {
-  const [queryId, setQueryId] = useState<string>('');
   const [summary, setSummary] = useState('');
+  const queryRef = useRef(query);
+
+  useEffect(() => {
+    // We store the query in a ref so that we only refetch the assistant when new articles are coming.
+    // This avoids doing a double-query in between the request-response from the query API.
+    queryRef.current = query;
+    setSummary('');
+  }, [query]);
 
   // Reset summary every time the query changes
   useEffect(() => {
-    console.log('query or hits changed');
-    setSummary('');
     if (hits.length === 0) return;
     console.log(hits);
     const passages = hits.flatMap((h) =>
@@ -56,16 +61,16 @@ const AssistantListener = ({ hits, query }: AssistantListenerProps) => {
       )
     );
     console.log(
-      `Fetching assistant for ${query} and ${JSON.stringify(passages, undefined, 4)}`
+      `Fetching assistant for ${queryRef.current} and ${JSON.stringify(passages, undefined, 4)}`
     );
     refetch(`/api/assistant`, {
       method: 'POST',
       body: JSON.stringify({
-        query,
+        query: queryRef.current,
         articles: passages.slice(0, 3),
       }),
     });
-  }, [query, hits]);
+  }, [hits]);
 
   const { refetch, status } = useStreamRequest(
     useCallback(
