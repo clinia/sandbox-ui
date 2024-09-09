@@ -1,3 +1,5 @@
+import { V1Hit } from '@clinia/client-datapartition';
+
 export type InformationPocClient = {
   search: <T = Resource>(params: SearchRequest) => Promise<SearchResponse<T>>;
 };
@@ -15,7 +17,7 @@ export type SearchResponse<T = Resource> = {
 
 export type Hit<T = Resource> = {
   resource: T;
-  highlighting?: Record<string, Highlight[]>;
+  highlighting?: V1Hit['highlighting'];
 };
 
 export type Resource = {

@@ -77,6 +77,14 @@ export const SearchProvider = ({ children, state }: SearchProviderProps) => {
               },
             },
             {
+              match: {
+                keywords: {
+                  value: params.query ?? '',
+                  type: 'word',
+                },
+              },
+            },
+            {
               knn: {
                 'content.text.passages.vector': {
                   value: params.query ?? '',
@@ -89,6 +97,7 @@ export const SearchProvider = ({ children, state }: SearchProviderProps) => {
           'abstract.passages',
           'abstract.passages.vector',
           'title',
+          'keywords',
           'content.text.passages.vector',
         ],
       },

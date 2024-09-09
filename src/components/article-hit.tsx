@@ -1,8 +1,8 @@
 'use client';
 
-import { Article, Hit, HitsHighlight } from '@/lib/client';
+import { Article, Hit } from '@/lib/client';
 import { useMemo } from 'react';
-import { getHighlightText } from '../lib/client/util';
+import { getHighlightText, isVectorHighlight } from '../lib/client/util';
 import { HtmlDisplay } from './html-display';
 import { useSearchLayout } from './search-layout';
 
@@ -15,10 +15,7 @@ export const ArticleHit = ({ hit }: { hit: Hit<Article> }) => {
     if (allHighlights.length === 0) {
       return undefined;
     }
-    const hitsHighlights = allHighlights.filter(
-      (highlight): highlight is HitsHighlight =>
-        'type' in highlight && highlight.type === 'vector'
-    );
+    const hitsHighlights = allHighlights.filter(isVectorHighlight);
     if (hitsHighlights.length === 0) {
       // We fallback to displaying the first text highlight
       return getHighlightText(allHighlights[0]);

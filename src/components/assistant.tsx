@@ -1,10 +1,11 @@
 'use client';
 
+import { getHighlightText } from '@/lib/client/util';
 import { CircleAlertIcon, RefreshCw, Sparkles } from 'lucide-react';
 import { twMerge } from 'tailwind-merge';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Markdown from 'react-markdown';
-import { V1Hit } from '@clinia/client-common';
+import { V1HighlightingHitVector, V1Hit } from '@clinia/client-common';
 import { useHits, useLoading, useQuery } from '@clinia/search-sdk-react';
 import { Button } from '@clinia-ui/react';
 import styles from './assistant.module.css';
@@ -134,7 +135,7 @@ const ErrorDisplay = ({ disabled, onRetry }: ErrorDisplayProps) => {
       <CircleAlertIcon className="text-accent-foreground" />
       <div className="flex flex-1 flex-col">
         <h3 className="font-medium text-accent-foreground">
-          Couldn't generate a summary
+          Couldn&apos;t generate a summary
         </h3>
         <p className="text-accent-foreground">
           You can still browse results below, or try regenerating a summary
@@ -162,14 +163,37 @@ const refetchHandlerFromHits = (
 ): undefined | (() => void) => {
   if (hits.length === 0) return undefined;
   const passages = hits.flatMap((h) =>
-    (h.highlighting?.['abstract.passages'] ?? []).slice(0, 1).map((x) =>
-      JSON.stringify({
+    // Find the highest scoring passage from each hit
+    {
+      const allHits = Object.values(h.highlighting ?? {}).flat();
+      if (allHits.length === 0) {
+        return [];
+      }
+
+      const vectorHits = allHits
+        .filter(
+          (highlight): highlight is V1HighlightingHitVector =>
+            'type' in highlight && highlight.type === 'vector'
+        )
+        .sort((a, b) => b.score - a.score);
+      if (vectorHits.length === 0) {
+        return [
+          JSON.stringify({
+            id: h.resource.id,
+            text: '',
+            title: h.resource.data.title,
+            passages: [getHighlightText(allHits[0])],
+          }),
+        ];
+      }
+
+      return JSON.stringify({
         id: h.resource.id,
         text: '',
         title: h.resource.data.title,
-        passages: [x.highlight],
-      })
-    )
+        passages: [getHighlightText(vectorHits[0])],
+      });
+    }
   );
   return () =>
     refetch(`/api/assistant`, {

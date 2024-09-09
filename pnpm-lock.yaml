@@ -15,11 +15,11 @@ dependencies:
     specifier: ^0.1.22
     version: 0.1.22(@types/react-dom@18.2.19)(@types/react@18.2.61)
   '@clinia/client-common':
-    specifier: 1.0.10-hgs-84d73454.0
-    version: 1.0.10-hgs-84d73454.0
+    specifier: 1.0.10-edge-842481d.0
+    version: 1.0.10-edge-842481d.0
   '@clinia/client-datapartition':
-    specifier: 1.0.10-hgs-84d73454.0
-    version: 1.0.10-hgs-84d73454.0(postcss@8.4.35)(typescript@5.3.3)
+    specifier: 1.0.10-edge-842481d.0
+    version: 1.0.10-edge-842481d.0(postcss@8.4.35)(typescript@5.3.3)
   '@clinia/search-sdk-core':
     specifier: ^0.1.0
     version: 0.1.0
@@ -481,8 +481,8 @@ packages:
     bundledDependencies:
       - '@clinia-ui/react'
 
-  /@clinia/client-common@1.0.10-hgs-84d73454.0:
-    resolution: {integrity: sha512-Sj/QyO4PpSrvU3S2mUVwC/qGNKwDKKN63ETulpSUtQF/MLAkYieiARk3L00HvewgpTi1kvYOQS0UpvX/qqaA6A==, tarball: https://npm.pkg.github.com/download/@clinia/client-common/1.0.10-hgs-84d73454.0/1cfc97209a44e69f9a829beccaf2007e90934e22}
+  /@clinia/client-common@1.0.10-edge-842481d.0:
+    resolution: {integrity: sha512-rRabMaIi6Gs/6CaIQAUGooBZbiPztY31Pa8cZu2ap5bR12KhAIOtWSKm7Pe1EeRibAlQGdczf3JabNBQTkg1Ig==, tarball: https://npm.pkg.github.com/download/@clinia/client-common/1.0.10-edge-842481d.0/85044d11c888dff36357f2a0ddb6fdca7a115e0a}
     dependencies:
       typescript: 5.6.2
     dev: false
@@ -493,8 +493,8 @@ packages:
       typescript: 5.6.2
     dev: false
 
-  /@clinia/client-datapartition@1.0.10-hgs-84d73454.0(postcss@8.4.35)(typescript@5.3.3):
-    resolution: {integrity: sha512-CysHBnL8pAsMzpqAn1yBf34vkxyS/S/7aNDaUB1V8yV5aAZbZU3I9Hxz7UdLKG6M4wsLt10yVdCq1HKRuPSFoA==, tarball: https://npm.pkg.github.com/download/@clinia/client-datapartition/1.0.10-hgs-84d73454.0/be45a25c5d9b7871bf2acbe842b12d3541e696e8}
+  /@clinia/client-datapartition@1.0.10-edge-842481d.0(postcss@8.4.35)(typescript@5.3.3):
+    resolution: {integrity: sha512-Dyss2r/dJweIwm7RgJXlOA3/3o8jDEHM4B55EwboyqwE0YITVr/N1qgIlC5QR2BPqOul+kUFl8Zmj85OGUCoOQ==, tarball: https://npm.pkg.github.com/download/@clinia/client-datapartition/1.0.10-edge-842481d.0/5caae9e250f23657c110f7efbd733a02e467b5bf}
     engines: {node: '>= 14.0.0'}
     dependencies:
       tsup: 6.7.0(postcss@8.4.35)(typescript@5.3.3)
