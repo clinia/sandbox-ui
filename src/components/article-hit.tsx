@@ -42,9 +42,12 @@ export const ArticleHit = ({ hit }: { hit: Hit<Article> }) => {
       <h1 className="mb-2 text-lg font-medium text-foreground">
         {hit.resource.data.title}
       </h1>
-      <p className="text-sm text-muted-foreground">
-        {highestHitsHighlight && <HtmlDisplay html={highestHitsHighlight} />}
-      </p>
+      {highestHitsHighlight && (
+        <HtmlDisplay
+          className="text-sm text-muted-foreground"
+          html={highestHitsHighlight}
+        />
+      )}
       {/* {passageHighlight && <PassageHighlight highlight={passageHighlight} />} */}
     </article>
   );

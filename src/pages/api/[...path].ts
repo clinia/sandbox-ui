@@ -19,6 +19,9 @@ async function proxy(req: NextApiRequest, res: NextApiResponse) {
       req.url = req.url.replace('/api', '');
     }
 
+    // We need to add basic auth
+    req.headers.authorization = `Basic ${Buffer.from(`${process.env.ATLAS_ROOT_USER}:${process.env.ATLAS_ROOT_PASSWORD}`).toString('base64')}`;
+
     proxyServer.web(
       req,
       res,
