@@ -10,7 +10,6 @@ export function useStreamRequest(onData: (data: string) => void) {
     async (url: string, request: RequestInit) => {
       setStatus('loading');
       if (controllerRef.current) {
-        console.warn('Aborting previous request');
         controllerRef.current.abort();
       }
       const controller = new AbortController();

@@ -21,7 +21,7 @@ export const ArticleDrawer = () => {
 
     const hitsHighlights = allhighlights.filter(
       (highlight): highlight is HitsHighlight =>
-        'type' in highlight && highlight.type === 'hits'
+        'type' in highlight && highlight.type === 'vector'
     );
     if (hitsHighlights.length === 0) {
       return allhighlights.map(getHighlightText);
