@@ -2,12 +2,13 @@
 
 import { SearchRequest, SearchResponse } from '@/lib/client';
 import { PropsWithChildren, use, useCallback, useEffect, useMemo } from 'react';
+import { Host } from '@clinia/client-common';
 import client from '@clinia/client-datapartition';
 import {
   SearchParameters,
   type SearchSDKOptions,
 } from '@clinia/search-sdk-core';
-import { SearchSDKProvider, useCollection } from '@clinia/search-sdk-react';
+import { SearchSDKProvider } from '@clinia/search-sdk-react';
 import { Collection } from '@clinia/search-sdk-react';
 
 type SearchProviderProps = PropsWithChildren<{
@@ -17,6 +18,19 @@ type SearchProviderProps = PropsWithChildren<{
   };
 }>;
 
+const getHost = (): Host => {
+  const url = new URL(`${process.env.NEXT_PUBLIC_BASE_URL}`);
+  if (url.host.endsWith('/')) {
+    url.host = url.host.slice(0, -1);
+  }
+
+  return {
+    protocol: url.protocol.replace(':', '') as 'http' | 'https',
+    url: `${url.host}/api`,
+    accept: 'readWrite',
+  };
+};
+
 const datapartitionClient = client(
   'clinia',
   {
@@ -24,13 +38,7 @@ const datapartitionClient = client(
     bearerToken: '',
   },
   {
-    hosts: [
-      {
-        url: 'localhost:3100/api',
-        protocol: 'http',
-        accept: 'readWrite',
-      },
-    ],
+    hosts: [getHost()],
   }
 );
 
