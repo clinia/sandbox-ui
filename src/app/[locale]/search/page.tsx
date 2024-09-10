@@ -17,7 +17,7 @@ export default async function Search() {
               <Assistant className="w-[674px]" />
               {/* <QuestionsResult /> */}
               <Hits />
-              <NotFound />
+              <NotFound className="mt-8" />
             </div>
           </div>
         </div>
