@@ -1,9 +1,15 @@
 'use client';
 
 import { SearchRequest, SearchResponse } from '@/lib/client';
-import { PropsWithChildren, useCallback, useMemo } from 'react';
+import {
+  PropsWithChildren,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+} from 'react';
 import { Host } from '@clinia/client-common';
-import client from '@clinia/client-datapartition';
+import datapartitionclient from '@clinia/client-datapartition';
 import {
   SearchParameters,
   type SearchSDKOptions,
@@ -30,22 +36,37 @@ const getHost = (): Host => {
   };
 };
 
-const datapartitionClient = client(
-  'clinia',
-  {
-    mode: 'BearerToken',
-    bearerToken: '',
-  },
-  {
-    hosts: [getHost()],
+type DatapartitionClient = ReturnType<typeof datapartitionclient>;
+let datapartitionClient: DatapartitionClient;
+const getClient = (): DatapartitionClient => {
+  if (!datapartitionClient) {
+    datapartitionClient = datapartitionclient(
+      'clinia',
+      {
+        mode: 'BearerToken',
+        bearerToken: '',
+      },
+      {
+        hosts: [getHost()],
+      }
+    );
   }
-);
+
+  return datapartitionClient;
+};
 
 export const SearchProvider = ({ children, state }: SearchProviderProps) => {
+  const client = useRef(
+    // Dumb value, we're just setting this to avoid having undefined in the ref.
+    datapartitionclient('clinia', { mode: 'BearerToken', bearerToken: '' })
+  );
+  useEffect(() => {
+    // We set the client in a ref to avoid hydration errors (window not defined).
+    client.current = getClient();
+  }, []);
+
   const search: SearchSDKOptions['search'] = async (_collection, params) => {
-    const resp = await datapartitionClient.searchClient.query<
-      Record<string, any>
-    >({
+    return client.current.searchClient.query<Record<string, any>>({
       partitionKey: 'clinia',
       collectionKey: 'articles',
       v1SearchParameters: {
@@ -102,7 +123,6 @@ export const SearchProvider = ({ children, state }: SearchProviderProps) => {
         ],
       },
     });
-    return resp;
   };
 
   const searchForFacets: SearchSDKOptions['searchForFacets'] =

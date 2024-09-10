@@ -19,29 +19,21 @@ export const Assistant = ({ className }: AssistantProps) => {
   const hits = useHits();
   const querying = useLoading();
   const [query] = useQuery();
-  const [seenHits, setSeenHits] = useState(false);
-  useEffect(() => {
-    if (hits.length > 0) {
-      setSeenHits(true);
-    }
-  }, [hits]);
-
-  if (!seenHits) {
-    return null;
-  }
 
   return (
-    <div className={twMerge('rounded-lg border p-6', className)}>
+    <div
+      className={twMerge(
+        'rounded-lg border p-6',
+        className,
+        (hits?.length === 0 || querying) && 'hidden'
+      )}
+    >
       <header className="mb-4 flex gap-4">
         <Sparkles className="stroke-primary" />
         <h1 className="text-base font-medium text-primary">Assistant</h1>
       </header>
       <div>
-        <AssistantListener
-          querying={querying}
-          hits={hits as any}
-          query={query}
-        />
+        <AssistantListener hits={hits as any} query={query} />
       </div>
       <footer></footer>
     </div>
@@ -50,7 +42,7 @@ export const Assistant = ({ className }: AssistantProps) => {
 
 type AssistantListenerProps = {
   query: string;
-  querying: boolean;
+  querying?: boolean;
   hits: V1Hit[];
 };
 const AssistantListener = ({
@@ -59,8 +51,6 @@ const AssistantListener = ({
   querying,
 }: AssistantListenerProps) => {
   const [summary, setSummary] = useState('');
-  // Little hack to ensure we do not display the error message between assistant requests
-  const [disableErrors, setDisableErrors] = useState(true);
   const queryRef = useRef(query);
 
   useEffect(() => {
@@ -68,7 +58,6 @@ const AssistantListener = ({
     // This avoids doing a double-query in between the request-response from the query API.
     queryRef.current = query;
     setSummary('');
-    setDisableErrors(true);
   }, [query]);
 
   const { refetch, status } = useStreamRequest(
@@ -86,14 +75,13 @@ const AssistantListener = ({
 
   useEffect(() => {
     refetchHandlerFromHits(hits, queryRef.current, refetch)?.();
-    setDisableErrors(false);
   }, [hits, refetch]);
 
-  if (
-    !querying &&
-    !disableErrors &&
-    (status === 'error' || (status === 'success' && summary.trim() === ''))
-  ) {
+  if (querying) {
+    return null;
+  }
+
+  if (status === 'error' || (status === 'success' && summary.trim() === '')) {
     return (
       <ErrorDisplay
         disabled={['idle', 'loading'].includes(status)}
@@ -103,7 +91,7 @@ const AssistantListener = ({
   }
 
   const classnames = [];
-  if (status === 'loading' || status === 'idle' || querying) {
+  if (status === 'loading' || status === 'idle') {
     classnames.push(styles.type);
   }
 
