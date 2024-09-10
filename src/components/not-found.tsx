@@ -7,6 +7,7 @@ import { NotFoundIcon } from './not-found-icon';
 type NotFoundProps = {
   className?: string;
 };
+const maxLength = 200;
 export const NotFound = ({ className }: NotFoundProps) => {
   const [query] = useQuery();
   const hits = useHits();
@@ -25,7 +26,12 @@ export const NotFound = ({ className }: NotFoundProps) => {
     >
       <NotFoundIcon />
       <h2 className="text-xl font-medium text-foreground">
-        No results found for &apos;{query}&apos;
+        No results found for &apos;
+        <span title={query}>
+          {query.slice(0, maxLength)}
+          {query.length > maxLength ? '...' : ''}
+        </span>
+        &apos;
       </h2>
       <p>
         There aren&apos;t any results matching your query. This can happen when
