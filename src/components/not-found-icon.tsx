@@ -25,7 +25,7 @@ export const NotFoundIcon = ({ className }: { className?: string }) => (
         y2="-52.4877"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#715DE1" />
+        <stop stopColor="#715DE1" />
         <stop offset="1" stopColor="#CF65E0" />
       </linearGradient>
     </defs>
