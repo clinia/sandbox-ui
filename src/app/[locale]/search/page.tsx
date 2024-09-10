@@ -1,5 +1,6 @@
 import { Assistant } from '@/components/assistant';
 import { Hits } from '@/components/hits';
+import { NotFound } from '@/components/not-found';
 import { SearchProvider } from '@/components/search-provider';
 import { SearchBox } from '@/components/searchbox';
 
@@ -16,6 +17,7 @@ export default async function Search() {
               <Assistant className="w-[674px]" />
               {/* <QuestionsResult /> */}
               <Hits />
+              <NotFound />
             </div>
           </div>
         </div>
