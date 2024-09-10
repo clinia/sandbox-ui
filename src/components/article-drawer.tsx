@@ -23,14 +23,34 @@ export const ArticleDrawer = () => {
       (highlight): highlight is HitsHighlight =>
         'type' in highlight && highlight.type === 'vector'
     );
+
     if (hitsHighlights.length === 0) {
       return allhighlights.map(getHighlightText);
     }
 
-    // We display the hits by score
-    return hitsHighlights
-      .sort((a, b) => b.score - a.score)
-      .map(getHighlightText);
+    // We first group the hits highlights by their paths
+    const hitsHighlightsByPath = hitsHighlights.reduce(
+      (acc, hit) => {
+        if (!acc[hit.path]) {
+          acc[hit.path] = [];
+        }
+        acc[hit.path].push(hit);
+        return acc;
+      },
+      {} as Record<string, HitsHighlight[]>
+    );
+
+    return (
+      Object.keys(hitsHighlightsByPath)
+        // We sort keys alphabetically
+        .sort()
+        .flatMap((key) =>
+          // THen we sort all of the keys by their score
+          hitsHighlightsByPath[key]
+            .sort((a, b) => b.path.localeCompare(a.path))
+            .map(getHighlightText)
+        )
+    );
   }, [searchLayout.hit?.highlighting]);
 
   if (!searchLayout.hit) {
@@ -61,6 +81,7 @@ export const ArticleDrawer = () => {
 
           {hitsToDisplay.map((highlight, idx) => (
             <HtmlDisplay
+              data-testid="highlight"
               className="my-4 whitespace-pre-line text-sm [&_em]:font-bold"
               key={idx}
               html={highlight}
