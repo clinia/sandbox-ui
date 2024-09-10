@@ -7,6 +7,7 @@ const INFERENCE_URL = process.env.INFERENCE_URL ?? 'http://127.0.0.1:8001';
 const MODEL_NAME =
   process.env.INFERENCE_MODEL_NAME ?? 'summarizer_medical_journals_qa';
 const MODEL_VERSION = process.env.INFERENCE_MODEL_VERSION ?? '120240905190000';
+const DEFAULT_MAX_GENERATED_TOKENS = 256;
 const client = new SummarizerClient(INFERENCE_URL);
 
 type InferParameter = {
@@ -37,6 +38,17 @@ function shrinkText(text: string, maxLength: number): string {
   return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
 }
 
+function getMaxGeneratedTokens(): number {
+  if (process.env.INFERENCE_MAX_GENERATED_TOKENS) {
+    const value = parseInt(process.env.INFERENCE_MAX_GENERATED_TOKENS);
+    if (!isNaN(value)) {
+      return value;
+    }
+  }
+
+  return DEFAULT_MAX_GENERATED_TOKENS;
+}
+
 export async function POST(request: NextRequest) {
   const { query, articles, mode } = (await request.json()) as {
     query: string;
@@ -58,13 +70,14 @@ export async function POST(request: NextRequest) {
   let responseStream = new TransformStream();
   const writer = responseStream.writable.getWriter();
 
-  const answerStream = client.streamAnswer(
-    MODEL_NAME,
-    MODEL_VERSION,
+  const answerStream = client.streamAnswer({
+    modelName: MODEL_NAME,
+    modelVersion: MODEL_VERSION,
     query,
-    articles,
-    mode ?? 'answer'
-  );
+    passages: articles,
+    mode: mode ?? 'answer',
+    maxGeneratedTokens: getMaxGeneratedTokens(),
+  });
 
   (async () => {
     for await (const chunk of answerStream) {
