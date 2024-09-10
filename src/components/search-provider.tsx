@@ -93,7 +93,7 @@ export const SearchProvider = ({ children, state }: SearchProviderProps) => {
               match: {
                 title: {
                   value: params.query ?? '',
-                  type: 'word',
+                  type: 'phrase',
                 },
               },
             },
