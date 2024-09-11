@@ -105,6 +105,11 @@ const AssistantListener = ({
             {...props}
           />
         ),
+        p: (props) => (
+          <p className="mb-4" {...props}>
+            {props.children}
+          </p>
+        ),
       }}
     >
       {summary}
