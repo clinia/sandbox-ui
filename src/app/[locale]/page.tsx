@@ -14,7 +14,10 @@ import {
 
 export default async function Home() {
   const t = await getTranslations();
-  const catalogClient = useServerSideDataCatalogClient();
+
+  const catalogClient = useServerSideDataCatalogClient({
+    authorization: `Basic ${Buffer.from(`${process.env.ATLAS_ROOT_USER}:${process.env.ATLAS_ROOT_PASSWORD}`).toString('base64')}`,
+  });
   const partitionsResponse = await catalogClient.partitionsClient
     .listDataPartitions({
       page: 0,
@@ -46,6 +49,7 @@ export default async function Home() {
                   <CardDescription></CardDescription>
                 </CardHeader>
                 <CardContent>
+                  {/*
                   <p
                     className={`font-semibold ${
                       partition.status === 'STATUS_READY'
@@ -54,7 +58,7 @@ export default async function Home() {
                     }`}
                   >
                     {partition.status}
-                  </p>
+                  </p> */}
                 </CardContent>
               </Card>
             </Link>
