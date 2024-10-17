@@ -1,23 +1,26 @@
 {
-    "home": {
-        "questions": {
-            "title": "Try asking..."
-        }
-    },
-    "search": {
-        "followUp": {
-            "title": "Follow up..."
-        }
-    },
-    "searchbox": {
-        "placeholder": "Search for words and phrases, or ask a question...",
-        "groups": {
-            "ask": {
-                "heading": "Ask"
-            },
-            "search": {
-                "heading": "Search"
-            }
-        }
+  "landing": {
+    "title": "Available Data Partitions"
+  },
+  "home": {
+    "questions": {
+      "title": "Try asking..."
     }
+  },
+  "search": {
+    "followUp": {
+      "title": "Follow up..."
+    }
+  },
+  "searchbox": {
+    "placeholder": "Search for words and phrases, or ask a question...",
+    "groups": {
+      "ask": {
+        "heading": "Ask"
+      },
+      "search": {
+        "heading": "Search"
+      }
+    }
+  }
 }

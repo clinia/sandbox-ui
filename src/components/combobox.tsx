@@ -14,6 +14,7 @@ import {
   CommandItem,
   CommandList,
 } from '@clinia-ui/react';
+import { usePartitionKey } from './use-partition-key';
 
 type ComboBoxProps = React.HTMLAttributes<HTMLDivElement> & {
   initialQuery?: string;
@@ -25,6 +26,7 @@ export const ComboBox = ({
   ...props
 }: ComboBoxProps) => {
   const t = useTranslations();
+  const partitionKey = usePartitionKey();
   const [value, setValue] = useState(initialQuery ?? '');
   const [open, setOpen] = useState(false);
   const router = useRouter();
@@ -54,7 +56,7 @@ export const ComboBox = ({
 
   const handleSearch = (v: string) => {
     // Else we push the new search query to the router
-    router.push(`/search?q=${v}`);
+    router.push(`/${partitionKey}/search?q=${v}`);
   };
 
   return (
