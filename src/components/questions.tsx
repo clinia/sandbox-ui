@@ -1,7 +1,8 @@
 'use client';
 
 import { twMerge } from 'tailwind-merge';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { usePartitionKey } from './use-partition-key';
 
 type QuestionsProps = {
   className?: string;
@@ -10,7 +11,7 @@ type QuestionsProps = {
 };
 
 export const Questions = ({ title, questions, className }: QuestionsProps) => {
-  const router = useRouter();
+  const partitionKey = usePartitionKey();
 
   return (
     <div className={twMerge('flex flex-col ', className)}>
@@ -19,13 +20,13 @@ export const Questions = ({ title, questions, className }: QuestionsProps) => {
       </h1>
       <div className="flex flex-col items-center justify-center gap-2">
         {questions.map((question) => (
-          <span
+          <Link
             key={question}
-            onClick={() => router.push(`/search?q=${question}`)}
+            href={`/${partitionKey}/search?q=${question}`}
             className="cursor-pointer rounded-md border border-primary/20 bg-accent px-2 py-1 text-sm font-medium text-accent-foreground transition-colors duration-200 ease-in-out hover:bg-primary/20"
           >
             {question}
-          </span>
+          </Link>
         ))}
       </div>
     </div>

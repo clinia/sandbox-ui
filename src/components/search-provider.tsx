@@ -8,6 +8,7 @@ import {
   useMemo,
   useRef,
 } from 'react';
+import { useParams } from 'next/navigation';
 import { Host } from '@clinia/client-common';
 import datapartitionclient from '@clinia/client-datapartition';
 import {
@@ -15,6 +16,7 @@ import {
   type SearchSDKOptions,
 } from '@clinia/search-sdk-core';
 import { Collection, SearchSDKProvider } from '@clinia/search-sdk-react';
+import { usePartitionKey } from './use-partition-key';
 
 type SearchProviderProps = PropsWithChildren<{
   state?: {
@@ -56,6 +58,7 @@ const getClient = (): DatapartitionClient => {
 };
 
 export const SearchProvider = ({ children, state }: SearchProviderProps) => {
+  const partitionKey = usePartitionKey();
   const client = useRef(
     // Dumb value, we're just setting this to avoid having undefined in the ref.
     datapartitionclient('clinia', { mode: 'BearerToken', bearerToken: '' })
@@ -67,7 +70,7 @@ export const SearchProvider = ({ children, state }: SearchProviderProps) => {
 
   const search: SearchSDKOptions['search'] = async (_collection, params) => {
     return client.current.searchClient.query<Record<string, any>>({
-      partitionKey: 'clinia',
+      partitionKey,
       collectionKey: 'articles',
       v1SearchParameters: {
         page: 0,
